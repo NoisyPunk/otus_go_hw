@@ -18,7 +18,7 @@ func Unpack(s string) (string, error) {
 		if unicode.IsDigit(value) && unicode.IsDigit(runeSlice[i-1]) {
 			return "", ErrInvalidString
 		}
-		if !unicode.IsDigit(value) {
+		if unicode.IsLetter(value) {
 			result = result + string(value)
 			continue
 		}
