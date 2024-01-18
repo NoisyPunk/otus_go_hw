@@ -7,69 +7,79 @@ import (
 	"sync/atomic"
 )
 
-var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
+var (
+	ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
+	ErrErrorsNoWorkers     = errors.New("no workers for tasks")
+)
 
 type Task func() error
 
-var ErrorCount int32
-
-func worker(id int, tasks <-chan Task, errorChannel chan error, stop chan bool) {
+func worker(id int, tasks <-chan Task, maxErrorCount int, errorChannel chan<- int, stopChannel <-chan int32) {
 	for {
 		task, ok := <-tasks
 		if !ok {
 			return
 		}
-		fmt.Printf("Working, %v\n", id)
+		fmt.Println("task chanel is open")
 		err := task()
+		fmt.Printf("worker %v now at work\n", id)
 		if err != nil {
-			//errorChannel <- err
-			atomic.AddInt32(&ErrorCount, 1)
-
+			errorChannel <- 1
+		}
+		select {
+		case data := <-stopChannel:
+			if data == int32(maxErrorCount) {
+				fmt.Printf("to much errors worker %v - stoped", id)
+				return
+			}
+		default:
 		}
 	}
 }
 
-func errorChecker(tasks chan Task, errorChannel chan error, maxErrorCount int, stop chan bool, stop2 chan bool) {
+func errorChecker(workers int, maxErrorCount int, errorChannel <-chan int, stopChannel chan<- int32) {
+	var errCount int32
 	for {
-		//fmt.Println("test34")
-		if ErrorCount == int32(maxErrorCount) {
-			stop <- true
-			return
-		}
 		select {
-		case <-stop2:
-			return
+		case data := <-errorChannel:
+			if data == 0 {
+				return
+			}
+			atomic.AddInt32(&errCount, 1)
+			if errCount == int32(maxErrorCount) {
+				for i := 1; i <= workers; i++ {
+					fmt.Printf("max count of errors achieved: %v, send signal to workers\n", maxErrorCount)
+					stopChannel <- errCount
+				}
+				return
+			}
 		default:
-
+			continue
 		}
 	}
-	//var errCount int32
-	//for {
-	//	select {
-	//	case _ = <-errorChannel:
-	//		atomic.AddInt32(&errCount, 1)
-	//		if errCount == int32(maxErrorCount) {
-	//			fmt.Println("toMuch")
-	//			stop <- true
-	//			//close(errorChannel)
-	//			//return
-	//		}
-	//	case <-stop2:
-	//		close(errorChannel)
-	//		return
-	//	}
-	//}
+}
+
+func taskScheduler(tasks []Task, taskChannel chan<- Task) {
+	for _, t := range tasks {
+		taskChannel <- t
+		fmt.Println("task added to channel")
+	}
+	close(taskChannel)
 }
 
 // Run starts tasks in n goroutines and stops its work when receiving m errors from tasks.
-func Run(tasks []Task, n, m int) error {
+func Run(tasks []Task, workersCount, maxErrorsCount int) error {
 	wg := sync.WaitGroup{}
-	workersCount := n
+	if workersCount <= 0 {
+		return ErrErrorsNoWorkers
+	}
+	if maxErrorsCount == 0 {
+		return ErrErrorsLimitExceeded
+	}
 
-	taskChannel := make(chan Task)
-	errorChannel := make(chan error)
-	stopChannel := make(chan bool, 1)
-	stopChannel2 := make(chan bool, 1)
+	taskChannel := make(chan Task, len(tasks))
+	errorChannel := make(chan int, maxErrorsCount)
+	stopChannel := make(chan int32)
 
 	for w := 1; w <= workersCount; w++ {
 		wg.Add(1)
@@ -77,33 +87,23 @@ func Run(tasks []Task, n, m int) error {
 		w := w
 		go func() {
 			defer wg.Done()
-			worker(w, taskChannel, errorChannel, stopChannel2)
-			println("test")
+			worker(w, taskChannel, maxErrorsCount, errorChannel, stopChannel)
 		}()
 	}
-	go errorChecker(taskChannel, errorChannel, m, stopChannel, stopChannel2)
 
-	for _, t := range tasks {
-		taskChannel <- t
-		select {
-		case <-stopChannel:
-			close(taskChannel)
-			//stopChannel2 <- true
-			return ErrErrorsLimitExceeded
-		default:
+	go errorChecker(workersCount, maxErrorsCount, errorChannel, stopChannel)
 
-		}
-	}
+	go taskScheduler(tasks, taskChannel)
 
-	close(taskChannel)
-
-	//err := <-stopChannel
-	//close(taskChannel)
 	wg.Wait()
-	//defer func() { stopChannel2 <- true }()
-	stopChannel2 <- true
 
-	//close(stopChannel)
+	close(stopChannel)
+	close(errorChannel)
+
+	_, ok := <-taskChannel
+	if ok {
+		return ErrErrorsLimitExceeded
+	}
 
 	return nil
 }
