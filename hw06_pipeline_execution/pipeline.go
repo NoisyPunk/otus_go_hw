@@ -48,7 +48,6 @@ func stageExec(done In, in In, stageCounter int) Out {
 				outcome <- data
 			case <-done:
 				return
-
 			}
 		}
 	}()

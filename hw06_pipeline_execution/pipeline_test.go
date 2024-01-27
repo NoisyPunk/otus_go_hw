@@ -37,7 +37,7 @@ func TestPipeline(t *testing.T) {
 		g("Stringifier", func(v interface{}) interface{} { return strconv.Itoa(v.(int)) }),
 	}
 
-	string_stages := []Stage{
+	stringStages := []Stage{
 		g("Add string", func(v interface{}) interface{} { return v.(string) + " test with spaces" }),
 		g("Trim spaces", func(v interface{}) interface{} { return strings.ReplaceAll(v.(string)+" and without", " ", "") }),
 	}
@@ -96,8 +96,8 @@ func TestPipeline(t *testing.T) {
 		require.Len(t, result, 0)
 		require.Less(t, int64(elapsed), int64(abortDur)+int64(fault))
 	})
-	t.Run("nil data channel", func(t *testing.T) {
 
+	t.Run("nil data channel", func(t *testing.T) {
 		result := make([]error, 0, 10)
 		for s := range ExecutePipeline(nil, nil, stages...) {
 			result = append(result, s.(error))
@@ -118,12 +118,12 @@ func TestPipeline(t *testing.T) {
 		}()
 
 		result := make([]string, 0, 10)
-		for s := range ExecutePipeline(in, nil, string_stages...) {
+		for s := range ExecutePipeline(in, nil, stringStages...) {
 			result = append(result, s.(string))
 		}
-
-		require.Equal(t, []string{"Firsttestwithspacesandwithout",
-			"Secondtestwithspacesandwithout", "Thirdtestwithspacesandwithout"}, result)
+		require.Equal(t, []string{
+			"Firsttestwithspacesandwithout",
+			"Secondtestwithspacesandwithout", "Thirdtestwithspacesandwithout",
+		}, result)
 	})
-
 }
