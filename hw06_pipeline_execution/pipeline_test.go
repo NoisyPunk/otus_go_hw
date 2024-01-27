@@ -2,6 +2,7 @@ package hw06pipelineexecution
 
 import (
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -34,6 +35,11 @@ func TestPipeline(t *testing.T) {
 		g("Multiplier (* 2)", func(v interface{}) interface{} { return v.(int) * 2 }),
 		g("Adder (+ 100)", func(v interface{}) interface{} { return v.(int) + 100 }),
 		g("Stringifier", func(v interface{}) interface{} { return strconv.Itoa(v.(int)) }),
+	}
+
+	string_stages := []Stage{
+		g("Add string", func(v interface{}) interface{} { return v.(string) + " test with spaces" }),
+		g("Trim spaces", func(v interface{}) interface{} { return strings.ReplaceAll(v.(string)+" and without", " ", "") }),
 	}
 
 	t.Run("simple case", func(t *testing.T) {
@@ -90,4 +96,34 @@ func TestPipeline(t *testing.T) {
 		require.Len(t, result, 0)
 		require.Less(t, int64(elapsed), int64(abortDur)+int64(fault))
 	})
+	t.Run("nil data channel", func(t *testing.T) {
+
+		result := make([]error, 0, 10)
+		for s := range ExecutePipeline(nil, nil, stages...) {
+			result = append(result, s.(error))
+		}
+
+		require.Equal(t, []error{ErrNilChannel}, result)
+	})
+
+	t.Run("case with strings", func(t *testing.T) {
+		in := make(Bi)
+		data := []string{"First", "Second", "Third"}
+
+		go func() {
+			for _, v := range data {
+				in <- v
+			}
+			close(in)
+		}()
+
+		result := make([]string, 0, 10)
+		for s := range ExecutePipeline(in, nil, string_stages...) {
+			result = append(result, s.(string))
+		}
+
+		require.Equal(t, []string{"Firsttestwithspacesandwithout",
+			"Secondtestwithspacesandwithout", "Thirdtestwithspacesandwithout"}, result)
+	})
+
 }
