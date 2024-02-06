@@ -17,6 +17,10 @@ func TestCopy(t *testing.T) {
 	})
 	t.Run("offset equal than filesize", func(t *testing.T) {
 		err := Copy("testdata/input.txt", "testdata/test.txt", 6617, 6617)
-		require.Equal(t, ErrOffsetExceedsFileSize, err)
+		require.ErrorIs(t, ErrOffsetExceedsFileSize, err)
+	})
+	t.Run("params less than zero", func(t *testing.T) {
+		err := Copy("testdata/input.txt", "testdata/test.txt", -1, -1)
+		require.ErrorIs(t, ErrParamsLessZero, err)
 	})
 }

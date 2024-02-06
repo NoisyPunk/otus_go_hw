@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"io"
-	"log"
 	"os"
 
 	"github.com/schollz/progressbar/v3"
@@ -13,15 +11,16 @@ import (
 var (
 	ErrUnsupportedFile       = errors.New("unsupported file")
 	ErrOffsetExceedsFileSize = errors.New("offset exceeds file size")
+	ErrParamsLessZero        = errors.New("offset or limit cannot be less than zero")
 )
 
 func Copy(fromPath, toPath string, offset, limit int64) error {
+	if offset < 0 || limit < 0 {
+		return ErrParamsLessZero
+	}
+
 	file, err := os.Open(fromPath)
-	defer func() {
-		if err = file.Close(); err != nil {
-			panic(err)
-		}
-	}()
+	defer func() { file.Close() }()
 	if err != nil {
 		return err
 	}
@@ -38,12 +37,9 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 	}
 
 	if limit == 0 {
-		err = copyFullFile(file, toPath, size)
-		if err != nil {
-			return err
-		}
-		return nil
+		return copyFullFile(file, toPath, size)
 	}
+
 	err = copyWithBuffer(file, toPath, offset, limit, size)
 	if err != nil {
 		return err
@@ -73,20 +69,11 @@ func copyWithBuffer(file *os.File, toPath string, offset, limit, size int64) err
 			limit = size - offset
 		}
 	}
-	buf := make([]byte, limit)
 
-	shift, err := file.Seek(offset, io.SeekStart)
+	readSeeker := io.ReadSeeker(file)
+	_, err := readSeeker.Seek(offset, io.SeekStart)
 	if err != nil {
 		return err
-	}
-
-	_, err = file.ReadAt(buf, shift)
-	if err != nil {
-		if errors.Is(err, io.EOF) {
-			_ = err
-		} else {
-			return err
-		}
 	}
 
 	newFile, err := os.Create(toPath)
@@ -94,11 +81,11 @@ func copyWithBuffer(file *os.File, toPath string, offset, limit, size int64) err
 		return err
 	}
 
-	reader := bytes.NewReader(buf)
-	_, err = io.Copy(io.MultiWriter(newFile, makeProgressBar(limit)), reader)
+	_, err = io.CopyN(io.MultiWriter(newFile, makeProgressBar(limit)), readSeeker, limit)
 	if err != nil {
-		log.Panicf("failed to write: %v", err)
+		return err
 	}
+
 	return nil
 }
 
