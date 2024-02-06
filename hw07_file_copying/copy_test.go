@@ -27,5 +27,4 @@ func TestCopy(t *testing.T) {
 		err := Copy("testdata/input.txt", "testdata/test.txt", -1, 1)
 		require.ErrorIs(t, ErrParamsLessZero, err)
 	})
-
 }
