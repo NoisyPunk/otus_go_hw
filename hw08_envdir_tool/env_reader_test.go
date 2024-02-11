@@ -18,11 +18,8 @@ func TestReadDir(t *testing.T) {
 	})
 
 	t.Run("filename with '=' ", func(t *testing.T) {
-		data := []byte{1}
 		filename := path + "/te=st"
-
-		err = os.WriteFile(filename, data, 0644)
-
+		_, err = os.Create(filename)
 		require.NoError(t, err)
 		_, err = ReadDir(path)
 		require.ErrorIs(t, err, ErrWrongFileName)
