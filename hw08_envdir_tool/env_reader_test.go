@@ -12,6 +12,11 @@ func TestReadDir(t *testing.T) {
 	require.NoError(t, err)
 	defer os.RemoveAll(path)
 
+	t.Run("dir is empty", func(t *testing.T) {
+		_, err = ReadDir(path)
+		require.NoError(t, err)
+	})
+
 	t.Run("filename with '=' ", func(t *testing.T) {
 		data := []byte{1}
 		filename := path + "/te=st"
@@ -27,10 +32,5 @@ func TestReadDir(t *testing.T) {
 		dir := ""
 		_, err = ReadDir(dir)
 		require.ErrorIs(t, err, ErrEmptyDirectoryPath)
-	})
-
-	t.Run("dir is empty", func(t *testing.T) {
-		_, err = ReadDir(path)
-		require.NoError(t, err)
 	})
 }
