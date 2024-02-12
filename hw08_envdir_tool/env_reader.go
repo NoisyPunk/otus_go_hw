@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"io"
 	"os"
 	"regexp"
 	"strings"
@@ -51,12 +53,15 @@ func ReadDir(dir string) (Environment, error) {
 			continue
 		}
 
-		data, err := os.ReadFile(filePath)
+		openedFile, err := os.Open(filePath)
 		if err != nil {
 			return nil, err
 		}
 
-		environmentValue := firstLine(data)
+		environmentValue, err := firstLine(openedFile)
+		if err != nil {
+			return nil, err
+		}
 
 		envValue := EnvValue{
 			Value:      environmentValue,
@@ -67,8 +72,17 @@ func ReadDir(dir string) (Environment, error) {
 	return environment, nil
 }
 
-func firstLine(data []byte) string {
-	return strings.ReplaceAll(strings.Split(string(data), "\n")[0], "\000", "\n")
+func firstLine(file *os.File) (string, error) {
+	reader := bufio.NewReader(file)
+
+	firstString, err := reader.ReadString('\n')
+	if err != io.EOF && err != nil {
+		return "", err
+	}
+
+	environmentValue := strings.TrimRight(strings.ReplaceAll(firstString, "\000", "\n"), "\n")
+
+	return environmentValue, err
 }
 
 func checkFileName(name string) error {
