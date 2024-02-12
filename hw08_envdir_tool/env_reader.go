@@ -59,7 +59,7 @@ func ReadDir(dir string) (Environment, error) {
 		}
 
 		environmentValue, err := firstLine(openedFile)
-		if err != nil {
+		if err != io.EOF && err != nil {
 			return nil, err
 		}
 
