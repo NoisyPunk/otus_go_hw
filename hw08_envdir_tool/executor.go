@@ -22,9 +22,11 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	command := exec.Command(cmd[2], cmd[3], cmd[4], cmd[5]) //nolint:gosec
 
 	command.Stdout = os.Stdout
+	command.Stdin = os.Stdin
+	command.Stderr = os.Stderr
 
 	if err := command.Run(); err != nil {
 		log.Fatal(err)
 	}
-	return 0
+	return command.ProcessState.ExitCode()
 }
