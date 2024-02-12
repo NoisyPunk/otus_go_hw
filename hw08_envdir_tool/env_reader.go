@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"io"
 	"os"
 	"regexp"
@@ -59,7 +60,7 @@ func ReadDir(dir string) (Environment, error) {
 		}
 
 		environmentValue, err := firstLine(openedFile)
-		if err != io.EOF && err != nil {
+		if !errors.Is(err, io.EOF) && err != nil {
 			return nil, err
 		}
 
