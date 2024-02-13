@@ -12,4 +12,9 @@ func TestRunCmd(t *testing.T) {
 		resultCode := RunCmd(cmdArds, nil)
 		require.Equal(t, resultCode, 0)
 	})
+	t.Run("Incorrect script", func(t *testing.T) {
+		cmdArds := []string{"", "", "/bin/bash", "./testdata/echo.s", "1", "1"}
+		resultCode := RunCmd(cmdArds, nil)
+		require.Equal(t, resultCode, 100)
+	})
 }
