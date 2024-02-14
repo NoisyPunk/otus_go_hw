@@ -29,7 +29,7 @@ func RunCmd(cmd []string, env Environment) (returnCode int) {
 	if err := command.Run(); err != nil {
 		var exitError *exec.ExitError
 		if errors.As(err, &exitError) {
-			exitError.ExitCode()
+			return exitError.ExitCode()
 		}
 		defaultErrCode := 100
 		return defaultErrCode
