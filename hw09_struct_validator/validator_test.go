@@ -2,6 +2,7 @@ package hw09structvalidator
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -42,8 +43,24 @@ func TestValidate(t *testing.T) {
 		expectedErr error
 	}{
 		{
-			// Place your code here.
+			in: Response{
+				Code: 201,
+				Body: "test",
+			}, // Place your code here.
 		},
+		{
+			in: User{
+				ID:     "ranmcurymipmrtomhyacepvnpdwaslhsrwws",
+				Name:   "test",
+				Age:    12,
+				Email:  "ololo@olol.ru",
+				Role:   "admen",
+				Phones: nil,
+				meta:   nil,
+			},
+			expectedErr: ErrInterfaceNotStruct, // Place your code here.
+		},
+
 		// ...
 		// Place your code here.
 	}
@@ -52,6 +69,14 @@ func TestValidate(t *testing.T) {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			tt := tt
 			t.Parallel()
+			err := Validate(tt.in)
+			//require.Len(t, err, 0)
+			var testErr ValidationErrors
+			if errors.As(err, &testErr) {
+				fmt.Println("wow")
+			} else {
+				fmt.Println("Haha")
+			}
 
 			// Place your code here.
 			_ = tt
