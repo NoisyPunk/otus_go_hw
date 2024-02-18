@@ -90,7 +90,6 @@ func Validate(v interface{}) error {
 					validationErrors = append(validationErrors, *validationErr)
 				}
 			}
-
 		}
 	}
 	if len(validationErrors) != 0 {
@@ -99,9 +98,9 @@ func Validate(v interface{}) error {
 	return nil
 }
 
-func validateString(string string, tagValues string, name string) (*ValidationError, error) {
+func validateString(stringVal string, tagValues string, name string) (*ValidationError, error) {
 	rules := strings.Split(tagValues, "|")
-	if len(string) == 0 {
+	if len(stringVal) == 0 {
 		return nil, nil
 	}
 
@@ -112,7 +111,7 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 			if err != nil {
 				return nil, err
 			}
-			if len(string) != strLen {
+			if len(stringVal) != strLen {
 				return &ValidationError{
 					Field: name,
 					Err:   ErrLenIsNotEqual,
@@ -120,7 +119,7 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 			}
 		case strings.HasPrefix(rule, "regexp:"):
 			regExp := strings.TrimPrefix(rule, "regexp:")
-			valid, err := regexp.MatchString(regExp, string)
+			valid, err := regexp.MatchString(regExp, stringVal)
 			if err != nil {
 				return nil, err
 			}
@@ -136,7 +135,7 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 			in := strings.TrimPrefix(rule, "in:")
 			values := strings.Split(in, ",")
 			for _, value := range values {
-				if string == value {
+				if stringVal == value {
 					counter++
 				}
 			}
@@ -145,11 +144,8 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 					Field: name,
 					Err:   ErrNotInRange,
 				}, nil
-
 			}
-
 		}
-
 	}
 	return nil, nil
 }
@@ -202,9 +198,7 @@ func validateInt(digit int, tagValues string, name string) (*ValidationError, er
 					Field: name,
 					Err:   ErrNotInRange,
 				}, nil
-
 			}
-
 		}
 	}
 	return nil, nil
