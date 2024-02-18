@@ -12,10 +12,10 @@ type UserRole string
 // Test the function on different structures and other types.
 type (
 	User struct {
-		ID     string `json:"id" validate:"len:36"`
+		ID     string `json:"id" validate:"len:35|regexp:\\d+"`
 		Name   string
 		Age    int             `validate:"min:18|max:50"`
-		Email  string          `validate:"regexp:^\\w+@\\w+\\.\\w+$"`
+		Email  string          `validate:"regexp:^\\w+@\\w+\\.\\w+$|len:100"`
 		Role   UserRole        `validate:"in:admin,stuff"`
 		Phones []string        `validate:"len:11"`
 		meta   json.RawMessage //nolint:unused
@@ -53,9 +53,9 @@ func TestValidate(t *testing.T) {
 				ID:     "ranmcurymipmrtomhyacepvnpdwaslhsrwws",
 				Name:   "test",
 				Age:    12,
-				Email:  "ololo@olol.ru",
+				Email:  "ololool@ol.ru",
 				Role:   "admen",
-				Phones: nil,
+				Phones: []string{"92000000000", "920000000014", "920000000023"},
 				meta:   nil,
 			},
 			expectedErr: ErrInterfaceNotStruct, // Place your code here.
