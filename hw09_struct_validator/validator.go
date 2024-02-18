@@ -2,7 +2,6 @@ package hw09structvalidator
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -10,7 +9,13 @@ import (
 )
 
 var (
-	ErrInterfaceNotStruct TechnicalErrors = errors.New("given interface is not a struct")
+	ErrInterfaceNotStruct = errors.New("given interface is not a struct")
+
+	ErrLenIsNotEqual      = errors.New("len of value is not equal with required len")
+	ErrRegExpIsNotEqual   = errors.New("value is not require with reqExp")
+	ErrNotInRange         = errors.New("value is not in range of expected values")
+	ErrValueIsMoreThenMax = errors.New("value is more than maximum")
+	ErrValueIsLessThenMin = errors.New("value is less than minimum")
 )
 
 type ValidationError struct {
@@ -20,14 +25,13 @@ type ValidationError struct {
 
 type ValidationErrors []ValidationError
 
-type TechnicalErrors error
-
 func (v ValidationErrors) Error() string {
-	test := ValidationError{
-		Field: "test",
-		Err:   nil,
+	var errs []string
+	for _, err := range v {
+		errs = append(errs, err.Err.Error())
 	}
-	return test.Field
+	stringErr := strings.Join(errs, ",")
+	return stringErr
 }
 
 func Validate(v interface{}) error {
@@ -58,12 +62,8 @@ func Validate(v interface{}) error {
 			}
 
 		case []int:
-			for _, val := range value.([]string) {
-				intVal, err := strconv.Atoi(val)
-				if err != nil {
-					return err
-				}
-				validationErr, err := validateInt(intVal, tagValue, name)
+			for _, val := range value.([]int) {
+				validationErr, err := validateInt(val, tagValue, name)
 				if err != nil {
 					return err
 				}
@@ -101,6 +101,9 @@ func Validate(v interface{}) error {
 
 func validateString(string string, tagValues string, name string) (*ValidationError, error) {
 	rules := strings.Split(tagValues, "|")
+	if len(string) == 0 {
+		return nil, nil
+	}
 
 	for _, rule := range rules {
 		switch {
@@ -112,7 +115,7 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 			if len(string) != strLen {
 				return &ValidationError{
 					Field: name,
-					Err:   fmt.Errorf("can't validate field '%s' len of value is not equal with required == %d", name, strLen),
+					Err:   ErrLenIsNotEqual,
 				}, nil
 			}
 		case strings.HasPrefix(rule, "regexp:"):
@@ -124,7 +127,7 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 			if !valid {
 				return &ValidationError{
 					Field: name,
-					Err:   fmt.Errorf("can't validate field '%s' is not require with reqExp", name),
+					Err:   ErrRegExpIsNotEqual,
 				}, nil
 			}
 
@@ -140,7 +143,7 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 			if counter == 0 {
 				return &ValidationError{
 					Field: name,
-					Err:   fmt.Errorf("can't validate field '%s' is not in range of expected values", name),
+					Err:   ErrNotInRange,
 				}, nil
 
 			}
@@ -153,6 +156,9 @@ func validateString(string string, tagValues string, name string) (*ValidationEr
 
 func validateInt(digit int, tagValues string, name string) (*ValidationError, error) {
 	rules := strings.Split(tagValues, "|")
+	if digit == 0 {
+		return nil, nil
+	}
 
 	for _, rule := range rules {
 		switch {
@@ -164,18 +170,18 @@ func validateInt(digit int, tagValues string, name string) (*ValidationError, er
 			if digit < minimum {
 				return &ValidationError{
 					Field: name,
-					Err:   fmt.Errorf("can't validate field '%s' value is less than minimum == %d", name, minimum),
+					Err:   ErrValueIsLessThenMin,
 				}, nil
 			}
 		case strings.HasPrefix(rule, "max:"):
-			maximum, err := strconv.Atoi(strings.TrimPrefix(rule, "mix:"))
+			maximum, err := strconv.Atoi(strings.TrimPrefix(rule, "max:"))
 			if err != nil {
 				return nil, err
 			}
 			if digit > maximum {
 				return &ValidationError{
 					Field: name,
-					Err:   fmt.Errorf("can't validate field '%s' value is more than maximum == %d", name, maximum),
+					Err:   ErrValueIsMoreThenMax,
 				}, nil
 			}
 		case strings.HasPrefix(rule, "in:"):
@@ -194,7 +200,7 @@ func validateInt(digit int, tagValues string, name string) (*ValidationError, er
 			if counter == 0 {
 				return &ValidationError{
 					Field: name,
-					Err:   fmt.Errorf("can't validate field '%s' is not in range of expected values", name),
+					Err:   ErrNotInRange,
 				}, nil
 
 			}
