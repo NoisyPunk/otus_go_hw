@@ -26,7 +26,7 @@ type ValidationError struct {
 type ValidationErrors []ValidationError
 
 func (v ValidationErrors) Error() string {
-	var errs []string
+	errs := make([]string, 0)
 	for _, err := range v {
 		errs = append(errs, err.Err.Error())
 	}
@@ -34,6 +34,7 @@ func (v ValidationErrors) Error() string {
 	return stringErr
 }
 
+//nolint:gocognit
 func Validate(v interface{}) error {
 	validatedStruct := reflect.ValueOf(v)
 
@@ -51,9 +52,9 @@ func Validate(v interface{}) error {
 		value := validatedStruct.Field(i).Interface()
 		name := validatedStruct.Type().Field(i).Name
 
-		switch value.(type) {
+		switch v := value.(type) {
 		case int:
-			validationErr, err := validateInt(value.(int), tagValue, name)
+			validationErr, err := validateInt(v, tagValue, name)
 			if err != nil {
 				return err
 			}
@@ -62,7 +63,7 @@ func Validate(v interface{}) error {
 			}
 
 		case []int:
-			for _, val := range value.([]int) {
+			for _, val := range v {
 				validationErr, err := validateInt(val, tagValue, name)
 				if err != nil {
 					return err
@@ -72,7 +73,7 @@ func Validate(v interface{}) error {
 				}
 			}
 		case string:
-			validationErr, err := validateString(value.(string), tagValue, name)
+			validationErr, err := validateString(v, tagValue, name)
 			if err != nil {
 				return err
 			}
@@ -81,7 +82,7 @@ func Validate(v interface{}) error {
 			}
 
 		case []string:
-			for _, val := range value.([]string) {
+			for _, val := range v {
 				validationErr, err := validateString(val, tagValue, name)
 				if err != nil {
 					return err
