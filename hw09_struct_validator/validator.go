@@ -26,7 +26,7 @@ type ValidationError struct {
 type ValidationErrors []ValidationError
 
 func (v ValidationErrors) Error() string {
-	errs := make([]string, len(v))
+	errs := make([]string, 0, len(v))
 	for _, err := range v {
 		errs = append(errs, err.Err.Error())
 	}

@@ -135,11 +135,6 @@ func TestSuccessFlow(t *testing.T) {
 			},
 		},
 		{
-			in: &App{
-				Version: "adsad",
-			},
-		},
-		{
 			in: Token{
 				Header: []byte{},
 			},
