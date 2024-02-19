@@ -26,7 +26,7 @@ type ValidationError struct {
 type ValidationErrors []ValidationError
 
 func (v ValidationErrors) Error() string {
-	errs := make([]string, 0)
+	errs := make([]string, len(v))
 	for _, err := range v {
 		errs = append(errs, err.Err.Error())
 	}
@@ -100,10 +100,10 @@ func Validate(v interface{}) error {
 }
 
 func validateString(stringVal string, tagValues string, name string) (*ValidationError, error) {
-	rules := strings.Split(tagValues, "|")
 	if len(stringVal) == 0 {
 		return nil, nil
 	}
+	rules := getRules(tagValues)
 
 	for _, rule := range rules {
 		switch {
@@ -132,15 +132,16 @@ func validateString(stringVal string, tagValues string, name string) (*Validatio
 			}
 
 		case strings.HasPrefix(rule, "in:"):
-			var counter int
+			var match bool
 			in := strings.TrimPrefix(rule, "in:")
 			values := strings.Split(in, ",")
 			for _, value := range values {
 				if stringVal == value {
-					counter++
+					match = true
+					break
 				}
 			}
-			if counter == 0 {
+			if !match {
 				return &ValidationError{
 					Field: name,
 					Err:   ErrNotInRange,
@@ -152,10 +153,10 @@ func validateString(stringVal string, tagValues string, name string) (*Validatio
 }
 
 func validateInt(digit int, tagValues string, name string) (*ValidationError, error) {
-	rules := strings.Split(tagValues, "|")
 	if digit == 0 {
 		return nil, nil
 	}
+	rules := getRules(tagValues)
 
 	for _, rule := range rules {
 		switch {
@@ -182,7 +183,7 @@ func validateInt(digit int, tagValues string, name string) (*ValidationError, er
 				}, nil
 			}
 		case strings.HasPrefix(rule, "in:"):
-			var counter int
+			var match bool
 			in := strings.TrimPrefix(rule, "in:")
 			values := strings.Split(in, ",")
 			for _, value := range values {
@@ -191,10 +192,11 @@ func validateInt(digit int, tagValues string, name string) (*ValidationError, er
 					return nil, err
 				}
 				if digit == intvalue {
-					counter++
+					match = true
+					break
 				}
 			}
-			if counter == 0 {
+			if !match {
 				return &ValidationError{
 					Field: name,
 					Err:   ErrNotInRange,
@@ -203,4 +205,9 @@ func validateInt(digit int, tagValues string, name string) (*ValidationError, er
 		}
 	}
 	return nil, nil
+}
+
+func getRules(tagValues string) []string {
+	rules := strings.Split(tagValues, "|")
+	return rules
 }
