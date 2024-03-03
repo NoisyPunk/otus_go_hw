@@ -25,19 +25,22 @@ func TestTelnetClient(t *testing.T) {
 
 			in := &bytes.Buffer{}
 			out := &bytes.Buffer{}
+			serviceWriter := &bytes.Buffer{}
+
+			result := make(chan error, 1)
 
 			timeout, err := time.ParseDuration("10s")
 			require.NoError(t, err)
 
-			client := NewTelnetClient(l.Addr().String(), timeout, io.NopCloser(in), out)
+			client := NewTelnetClient(l.Addr().String(), timeout, io.NopCloser(in), out, serviceWriter)
 			require.NoError(t, client.Connect())
 			defer func() { require.NoError(t, client.Close()) }()
 
 			in.WriteString("hello\n")
-			err = client.Send()
+			err = client.Send(result)
 			require.NoError(t, err)
 
-			err = client.Receive()
+			err = client.Receive(result)
 			require.NoError(t, err)
 			require.Equal(t, "world\n", out.String())
 		}()
@@ -60,6 +63,24 @@ func TestTelnetClient(t *testing.T) {
 			require.NotEqual(t, 0, n)
 		}()
 
+		wg.Wait()
+	})
+	t.Run("unable to connect", func(t *testing.T) {
+		var wg sync.WaitGroup
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+
+			serviceWriter := &bytes.Buffer{}
+
+			timeout, err := time.ParseDuration("10s")
+			require.NoError(t, err)
+
+			client := NewTelnetClient("127.0.0.2:", timeout, nil, nil, serviceWriter)
+			err = client.Connect()
+			require.ErrorIs(t, err, ErrUnableConnect)
+		}()
 		wg.Wait()
 	})
 }
