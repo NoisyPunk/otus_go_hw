@@ -41,10 +41,16 @@ func main() {
 
 	result := make(chan error, 1)
 	go func() {
-		_ = client.Send(result)
+		err = client.Send(result)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}()
 	go func() {
-		_ = client.Receive(result)
+		err = client.Receive(result)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}()
 
 	signals := make(chan os.Signal, 1)

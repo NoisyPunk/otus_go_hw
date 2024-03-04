@@ -63,7 +63,7 @@ func (tc *tclient) Receive(result chan<- error) error {
 	if err != nil {
 		result <- err
 	}
-	return tc.stdErrLogs(fmt.Sprintf("Received message: %s", tc.in))
+	return tc.stdErrLogs(fmt.Sprintf("Received message: %s", tc.conn))
 }
 
 func (tc *tclient) stdErrLogs(message string) error {
