@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"log"
 	"os"
@@ -35,7 +34,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(config.Host)
 
 	logg := logger.New(config.LogLevel)
 
