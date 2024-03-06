@@ -3,33 +3,41 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/app"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/logger"
-	internalhttp "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/server/http"
-	memorystorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/memory"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
+	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
+	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
 )
 
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "/etc/calendar/config.toml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "/configs/config.yaml", "Path to configuration file")
 }
 
 func main() {
 	flag.Parse()
 
 	if flag.Arg(0) == "version" {
-		printVersion()
+		configs.PrintVersion()
 		return
 	}
 
-	config := NewConfig()
-	logg := logger.New(config.Logger.Level)
+	config, err := configs.GetConfig(configFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(config.Host)
+
+	logg := logger.New(config.LogLevel)
 
 	storage := memorystorage.New()
 	calendar := app.New(logg, storage)
