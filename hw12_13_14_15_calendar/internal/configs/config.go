@@ -1,19 +1,15 @@
 package configs
 
 import (
-	"fmt"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"gopkg.in/yaml.v3"
 	"os"
 )
 
-var (
-	ErrReadConfigFile = fmt.Errorf("can't read config file")
-)
-
 type Config struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	LogLevel string `yaml:"level"`
+	Host     string `yaml:"HOST"`
+	Port     string `yaml:"PORT"`
+	LogLevel string `yaml:"LOGLEVEL"`
 }
 
 func newConfig() *Config {
@@ -24,15 +20,16 @@ func newConfig() *Config {
 	}
 }
 
-func GetConfig(path string) (*Config, error) {
+func GetConfig(path string) *Config {
+	logg := logger.New("debug")
 	configYaml, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		logg.Fatal(err.Error())
 	}
 	config := newConfig()
 	err = yaml.Unmarshal(configYaml, config)
 	if err != nil {
-		return nil, err
+		logg.Fatal(err.Error())
 	}
-	return config, nil
+	return config
 }
