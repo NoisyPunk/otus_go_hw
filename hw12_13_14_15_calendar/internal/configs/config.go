@@ -7,10 +7,10 @@ import (
 )
 
 type Config struct {
-	Host       string `yaml:"HOST"`
-	Port       string `yaml:"PORT"`
-	LogLevel   string `yaml:"LOGLEVEL"`
-	InmemStore bool   `yaml:"INMEMORY"`
+	Host       string `yaml:"host"`
+	Port       string `yaml:"port"`
+	LogLevel   string `yaml:"logLevel"`
+	InmemStore bool   `yaml:"inmemStore"`
 }
 
 func newConfig() *Config {
