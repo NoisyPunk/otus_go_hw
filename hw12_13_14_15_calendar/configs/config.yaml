@@ -4,3 +4,6 @@ PORT: "8182"
 
 # logger
 LOGLEVEL: "debug"
+
+# storage
+INMEMORY: true

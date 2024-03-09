@@ -2,7 +2,9 @@ package app
 
 import (
 	"context"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
+	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/google/uuid"
 	"time"
 )
@@ -20,7 +22,12 @@ type Storage interface {
 	MonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error)
 }
 
-func New(storage Storage) *App {
+func New(ctx context.Context, storage Storage) *App {
+	l := logger.FromContext(ctx)
+	if storage == nil {
+		l.Debug("database storage is used for server")
+		storage = sqlstorage.New()
+	}
 	return &App{
 		Storage: storage,
 	}
