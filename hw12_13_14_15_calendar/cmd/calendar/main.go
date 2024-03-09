@@ -29,8 +29,8 @@ func main() {
 	log := logger.New(config.LogLevel)
 	ctx := logger.ContextLogger(context.Background(), log)
 
-	storage := memorystorage.New(ctx)
-	calendar := app.New(log, storage)
+	storage := memorystorage.New()
+	calendar := app.New(storage)
 
 	server := internalhttp.NewServer(log, calendar)
 
