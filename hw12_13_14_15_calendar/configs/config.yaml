@@ -1,9 +1,9 @@
 # server
-HOST: "127.0.0.1"
-PORT: "8182"
+host: "127.0.0.1"
+port: "8182"
 
 # logger
-LOGLEVEL: "debug"
+logLevel: "debug"
 
 # storage
-INMEMORY: true
+inmemStore: true
