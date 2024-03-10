@@ -2,34 +2,34 @@ package app
 
 import (
 	"context"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
+	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/google/uuid"
-	"time"
 )
 
 type App struct {
-	Storage Storage
+	Storage storage.Storage
 }
 
-type Storage interface {
-	Create(ctx context.Context, data storage.Event, userID uuid.UUID) (uuid.UUID, error)
-	Update(ctx context.Context, eventID uuid.UUID, event storage.Event) error
-	Delete(ctx context.Context, eventID uuid.UUID) error
-	DailyList(ctx context.Context, date time.Time, userID uuid.UUID) ([]storage.Event, error)
-	WeeklyList(ctx context.Context, startWeekDate time.Time, userID uuid.UUID) ([]storage.Event, error)
-	MonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error)
-}
-
-func New(ctx context.Context, storage Storage) *App {
+func New(ctx context.Context, config *configs.Config) *App {
 	l := logger.FromContext(ctx)
-	if storage == nil {
+	var store storage.Storage
+
+	switch {
+	case config.InmemStore:
+		l.Debug("inmem storage is used for server")
+		store = memorystorage.New()
+	default:
 		l.Debug("database storage is used for server")
-		storage = sqlstorage.New()
+		store = sqlstorage.New()
+
 	}
+
 	return &App{
-		Storage: storage,
+		Storage: store,
 	}
 }
 

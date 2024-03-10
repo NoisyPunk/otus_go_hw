@@ -6,4 +6,7 @@ port: "8182"
 logLevel: "debug"
 
 # storage
-inmemStore: true
+inmemStore: false
+
+postgres_dsn: "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable"
+

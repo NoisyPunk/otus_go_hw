@@ -12,12 +12,10 @@ import (
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
-	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
 )
 
 var (
 	configFile string
-	storage    app.Storage
 )
 
 func init() {
@@ -31,11 +29,8 @@ func main() {
 
 	log := logger.New(config.LogLevel)
 	ctx := logger.ContextLogger(context.Background(), log)
-	if config.InmemStore {
-		storage = memorystorage.New()
-		log.Debug("inmemory storage is used for server")
-	}
-	calendar := app.New(ctx, storage)
+
+	calendar := app.New(ctx, config)
 
 	server := internalhttp.NewServer(calendar, config)
 

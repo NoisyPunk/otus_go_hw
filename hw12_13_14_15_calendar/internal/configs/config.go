@@ -11,6 +11,7 @@ type Config struct {
 	Port       string `yaml:"port"`
 	LogLevel   string `yaml:"logLevel"`
 	InmemStore bool   `yaml:"inmemStore"`
+	Dsn        string `yaml:"postgres_dsn"`
 }
 
 func newConfig() *Config {
