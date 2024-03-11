@@ -1,9 +1,10 @@
 package configs
 
 import (
+	"os"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"gopkg.in/yaml.v3"
-	"os"
 )
 
 type Config struct {
@@ -11,7 +12,7 @@ type Config struct {
 	Port       string `yaml:"port"`
 	LogLevel   string `yaml:"logLevel"`
 	InmemStore bool   `yaml:"inmemStore"`
-	Dsn        string `yaml:"postgres_dsn"`
+	Dsn        string `yaml:"postgresDsn"`
 }
 
 func newConfig() *Config {

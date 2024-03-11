@@ -2,13 +2,15 @@ package internalhttp
 
 import (
 	"context"
+	"io"
+	"net/http"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-	"io"
-	"net/http"
 )
 
 type Server struct {
@@ -37,8 +39,14 @@ func (s *Server) Start(ctx context.Context) error {
 
 	addr := s.host + ":" + s.port
 
+	server := &http.Server{
+		Addr:              addr,
+		ReadHeaderTimeout: 3 * time.Second,
+		Handler:           mux,
+	}
+
 	go func() error {
-		err := http.ListenAndServe(addr, mux)
+		err := server.ListenAndServe()
 		if err != nil {
 			return err
 		}
@@ -50,10 +58,12 @@ func (s *Server) Start(ctx context.Context) error {
 }
 
 func (s *Server) Stop(ctx context.Context) error {
+	_ = ctx
 	// TODO
 	return nil
 }
 
 func getHello(w http.ResponseWriter, r *http.Request) {
+	_ = r
 	io.WriteString(w, "Hello, OTUS!\n")
 }
