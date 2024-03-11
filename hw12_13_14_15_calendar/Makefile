@@ -31,4 +31,8 @@ install-lint-deps:
 lint: install-lint-deps
 	golangci-lint run ./...
 
-.PHONY: build run build-img run-img version test lint
+db:
+	docker-compose up
+	goose -dir migrations postgres "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable" up
+
+.PHONY: build run build-img run-img version test lint db
