@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
@@ -25,7 +26,6 @@ func New(ctx context.Context, config *configs.Config) *App {
 	default:
 		l.Debug("database storage is used for server")
 		store = sqlstorage.New()
-
 	}
 
 	return &App{

@@ -4,8 +4,10 @@ import (
 	"net/http"
 )
 
-func loggingMiddleware(next http.Handler) http.Handler { //nolint:unused
+//nolint:unused
+func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = next
 		// TODO
 	})
 }

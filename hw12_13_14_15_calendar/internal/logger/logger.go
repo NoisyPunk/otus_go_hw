@@ -2,18 +2,17 @@ package logger
 
 import (
 	"context"
-	"go.uber.org/zap/zapcore"
 
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
-
-type lkey struct {
-}
 
 var (
 	logger    *zap.Logger
 	loggerKey lkey
 )
+
+type lkey struct{}
 
 func ContextLogger(ctx context.Context, l *zap.Logger) context.Context {
 	return context.WithValue(ctx, loggerKey, l)

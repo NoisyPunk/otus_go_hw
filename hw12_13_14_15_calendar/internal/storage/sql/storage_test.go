@@ -2,15 +2,16 @@ package sqlstorage
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
-func TestStorage(t *testing.T) {
+func TestEvent(t *testing.T) {
 	log := logger.New("debug")
 	ctx := logger.ContextLogger(context.Background(), log)
 
@@ -58,6 +59,7 @@ func TestStorage(t *testing.T) {
 		}
 
 		id, err := DBstorage.Create(ctx, expectedEvent, userID)
+		require.NoError(t, err)
 		require.NotNil(t, id)
 
 		event := storage.Event{
@@ -78,7 +80,6 @@ func TestStorage(t *testing.T) {
 		err = DBstorage.db.Select(&events, query, id)
 		require.NoError(t, err)
 		require.Equal(t, &event, events[0])
-
 	})
 	t.Run("delete event", func(t *testing.T) {
 		userID := uuid.New()
@@ -93,6 +94,7 @@ func TestStorage(t *testing.T) {
 		}
 
 		id, err := DBstorage.Create(ctx, expectedEvent, userID)
+		require.NoError(t, err)
 		require.NotNil(t, id)
 
 		err = DBstorage.Delete(ctx, id)
@@ -100,9 +102,24 @@ func TestStorage(t *testing.T) {
 
 		query := `SELECT * FROM events where id = $1`
 		row, err := DBstorage.db.Exec(query, expectedEvent.UserID)
+		require.NoError(t, err)
 		c, err := row.RowsAffected()
+		require.NoError(t, err)
 		require.Zero(t, c)
 	})
+}
+
+func TestEventLists(t *testing.T) {
+	log := logger.New("debug")
+	ctx := logger.ContextLogger(context.Background(), log)
+
+	DBstorage := New()
+
+	dsn := "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable"
+
+	err := DBstorage.Connect(ctx, dsn)
+	require.NoError(t, err)
+
 	t.Run("daily list", func(t *testing.T) {
 		userID := uuid.New()
 
@@ -199,5 +216,4 @@ func TestStorage(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, result, 2)
 	})
-
 }

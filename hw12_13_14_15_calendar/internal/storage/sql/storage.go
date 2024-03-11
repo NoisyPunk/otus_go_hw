@@ -3,14 +3,15 @@ package sqlstorage
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // for DB connection
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"time"
 )
 
 var (
@@ -34,7 +35,7 @@ func (s *Storage) Connect(ctx context.Context, dsn string) (err error) {
 	return s.db.PingContext(ctx)
 }
 
-func (s *Storage) Close(ctx context.Context) error {
+func (s *Storage) Close() error {
 	return s.db.Close()
 }
 
@@ -94,6 +95,8 @@ func (s *Storage) Delete(ctx context.Context, eventID uuid.UUID) error {
 }
 
 func (s *Storage) DailyList(ctx context.Context, date time.Time, userID uuid.UUID) ([]storage.Event, error) {
+	l := logger.FromContext(ctx)
+
 	var events []storage.Event
 	query := `SELECT * FROM events where user_id = $1 and date_and_time between $2 and $2 + INTERVAL '1 day'`
 
@@ -101,10 +104,13 @@ func (s *Storage) DailyList(ctx context.Context, date time.Time, userID uuid.UUI
 	if err != nil {
 		return nil, err
 	}
+	l.Info("dayly list generated:", zap.String("user_id", userID.String()))
 	return events, nil
 }
 
 func (s *Storage) WeeklyList(ctx context.Context, startWeekDate time.Time, userID uuid.UUID) ([]storage.Event, error) {
+	l := logger.FromContext(ctx)
+
 	var events []storage.Event
 	query := `SELECT * FROM events where user_id = $1 and date_and_time between $2 and $2 + INTERVAL '1 week'`
 
@@ -112,11 +118,14 @@ func (s *Storage) WeeklyList(ctx context.Context, startWeekDate time.Time, userI
 	if err != nil {
 		return nil, err
 	}
-
+	l.Info("weekly list generated:", zap.String("user_id", userID.String()))
 	return events, nil
 }
 
-func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error) {
+func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
+	userID uuid.UUID,
+) ([]storage.Event, error) {
+	l := logger.FromContext(ctx)
 	var events []storage.Event
 	query := `SELECT * FROM events where user_id = $1 and date_and_time between $2 and $2 + INTERVAL '1 month'`
 
@@ -124,5 +133,6 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time, use
 	if err != nil {
 		return nil, err
 	}
+	l.Info("monthly list generated:", zap.String("user_id", userID.String()))
 	return events, nil
 }

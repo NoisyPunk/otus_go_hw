@@ -3,20 +3,18 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
 )
 
-var (
-	configFile string
-)
+var configFile string
 
 func init() {
 	flag.StringVar(&configFile, "config", "./configs/config.yaml", "Path to configuration file")

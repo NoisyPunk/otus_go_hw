@@ -2,12 +2,13 @@ package memorystorage
 
 import (
 	"context"
+	"sync"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-	"sync"
-	"time"
 )
 
 type Storage struct {
@@ -90,7 +91,9 @@ func (s *Storage) WeeklyList(ctx context.Context, startWeekDate time.Time, userI
 	return events, nil
 }
 
-func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error) {
+func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
+	userID uuid.UUID,
+) ([]storage.Event, error) {
 	l := logger.FromContext(ctx)
 
 	events := make([]storage.Event, 0)

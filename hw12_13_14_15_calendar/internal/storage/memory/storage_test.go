@@ -2,14 +2,15 @@ package memorystorage
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestStorage(t *testing.T) {
@@ -91,6 +92,5 @@ func TestStorage(t *testing.T) {
 
 		diff := cmp.Diff(expectedEvents, events, diffOpt)
 		require.EqualValues(t, "", diff)
-
 	})
 }
