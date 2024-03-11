@@ -23,7 +23,9 @@ version: build
 	$(BIN) version
 
 test:
-	docker-compose up -d && go test -race ./internal/... && docker-compose down -v
+	docker-compose up -d \
+	&& goose -dir migrations postgres "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable" up \
+	&& go test -race ./internal/... && docker-compose down -v
 
 install-lint-deps:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
