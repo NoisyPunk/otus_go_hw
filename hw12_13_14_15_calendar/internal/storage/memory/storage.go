@@ -67,6 +67,8 @@ func (s *Storage) DailyList(ctx context.Context, date time.Time, userID uuid.UUI
 
 	events := make([]storage.Event, 0)
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	for _, v := range s.storage {
 		if v.UserID == userID && v.DateAndTime.YearDay() == date.YearDay() {
 			events = append(events, v)
@@ -81,6 +83,8 @@ func (s *Storage) WeeklyList(ctx context.Context, startWeekDate time.Time, userI
 
 	events := make([]storage.Event, 0)
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	for _, v := range s.storage {
 		if v.UserID == userID && startWeekDate.YearDay() <= v.DateAndTime.YearDay() &&
 			v.DateAndTime.YearDay() <= startWeekDate.YearDay()+7 {
@@ -98,6 +102,8 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 
 	events := make([]storage.Event, 0)
 
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	for _, v := range s.storage {
 		if v.UserID == userID && startMonthDate.YearDay() <= v.DateAndTime.YearDay() &&
 			v.DateAndTime.YearDay() <= startMonthDate.YearDay()+30 {

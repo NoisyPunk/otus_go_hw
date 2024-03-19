@@ -2,9 +2,9 @@ package app
 
 import (
 	"context"
+	"go.uber.org/zap"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
@@ -15,16 +15,15 @@ type App struct {
 	Storage storage.Storage
 }
 
-func New(ctx context.Context, config *configs.Config) *App {
-	l := logger.FromContext(ctx)
+func New(logger zap.Logger, config *configs.Config) *App {
 	var store storage.Storage
 
 	switch {
 	case config.InmemStore:
-		l.Debug("inmem storage is used for server")
+		logger.Debug("inmem storage is used for server")
 		store = memorystorage.New()
 	default:
-		l.Debug("database storage is used for server")
+		logger.Debug("database storage is used for server")
 		store = sqlstorage.New()
 	}
 

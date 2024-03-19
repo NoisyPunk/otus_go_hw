@@ -63,7 +63,6 @@ func (s *Server) Stop(ctx context.Context) error {
 	return nil
 }
 
-func getHello(w http.ResponseWriter, r *http.Request) {
-	_ = r
+func getHello(w http.ResponseWriter, _ *http.Request) {
 	io.WriteString(w, "Hello, OTUS!\n")
 }
