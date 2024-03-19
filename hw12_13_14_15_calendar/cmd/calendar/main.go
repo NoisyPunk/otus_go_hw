@@ -26,7 +26,10 @@ func main() {
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	config := configs.GetConfig(configFile)
+	config, err := configs.GetConfig(configFile)
+	if err != nil {
+		panic(err)
+	}
 
 	log := logger.New(config.LogLevel)
 	ctx = logger.ContextLogger(ctx, log)

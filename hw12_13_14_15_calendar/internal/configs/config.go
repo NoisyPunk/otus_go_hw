@@ -3,7 +3,6 @@ package configs
 import (
 	"os"
 
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"gopkg.in/yaml.v3"
 )
 
@@ -24,16 +23,15 @@ func newConfig() *Config {
 	}
 }
 
-func GetConfig(path string) *Config {
-	logg := logger.New("debug")
+func GetConfig(path string) (*Config, error) {
 	configYaml, err := os.ReadFile(path)
 	if err != nil {
-		logg.Fatal(err.Error())
+		return nil, err
 	}
 	config := newConfig()
 	err = yaml.Unmarshal(configYaml, config)
 	if err != nil {
-		logg.Fatal(err.Error())
+		return nil, err
 	}
-	return config
+	return config, nil
 }
