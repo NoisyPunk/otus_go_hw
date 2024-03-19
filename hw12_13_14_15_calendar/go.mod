@@ -14,9 +14,12 @@ require (
 )
 
 require (
+	github.com/OpenPeeDeeP/depguard v1.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.8.0 // indirect
+	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
+	golang.org/x/tools v0.19.0 // indirect
 )
