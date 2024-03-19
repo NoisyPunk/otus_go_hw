@@ -22,19 +22,18 @@ func init() {
 
 func main() {
 	flag.Parse()
+	ctx, cancel := signal.NotifyContext(context.Background(),
+		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	defer cancel()
 
 	config := configs.GetConfig(configFile)
 
 	log := logger.New(config.LogLevel)
-	ctx := logger.ContextLogger(context.Background(), log)
+	ctx = logger.ContextLogger(ctx, log)
 
-	calendar := app.New(ctx, config)
+	calendar := app.New(log, config)
 
 	server := internalhttp.NewServer(calendar, config)
-
-	ctx, cancel := signal.NotifyContext(ctx,
-		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
-	defer cancel()
 
 	go func() {
 		<-ctx.Done()

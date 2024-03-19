@@ -30,7 +30,7 @@ test:
 	&& docker-compose down -v
 
 install-lint-deps:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 lint: install-lint-deps
 	golangci-lint run ./...

@@ -2,20 +2,20 @@ package app
 
 import (
 	"context"
-	"go.uber.org/zap"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 type App struct {
 	Storage storage.Storage
 }
 
-func New(logger zap.Logger, config *configs.Config) *App {
+func New(logger *zap.Logger, config *configs.Config) *App {
 	var store storage.Storage
 
 	switch {
