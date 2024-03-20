@@ -1,13 +1,17 @@
 package internalhttp
 
 import (
+	"go.uber.org/zap"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 //nolint:unused
-func loggingMiddleware(next http.Handler) http.Handler {
+func loggingMiddleware(next http.Handler, l *zap.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, _, _ = next, w, r
-		// TODO
+		start := time.Now()
+		next.ServeHTTP(w, r)
+		l.Info("request stats", zap.String("latency", strconv.Itoa(int(time.Since(start).Nanoseconds()))))
 	})
 }

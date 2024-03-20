@@ -35,7 +35,7 @@ func (s *Server) Start(ctx context.Context) error {
 	l := logger.FromContext(ctx)
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/hello", getHello)
+	mux.Handle("/hello", loggingMiddleware(http.HandlerFunc(s.getHello), l))
 
 	addr := s.host + ":" + s.port
 
@@ -63,6 +63,6 @@ func (s *Server) Stop(ctx context.Context) error {
 	return nil
 }
 
-func getHello(w http.ResponseWriter, _ *http.Request) {
+func (s *Server) getHello(w http.ResponseWriter, _ *http.Request) {
 	io.WriteString(w, "Hello, OTUS!\n")
 }
