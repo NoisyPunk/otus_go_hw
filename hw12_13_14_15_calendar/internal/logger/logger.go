@@ -33,7 +33,7 @@ func New(level string) *zap.Logger {
 		DisableStacktrace: true,
 		Encoding:          "json",
 		EncoderConfig:     zap.NewProductionEncoderConfig(),
-		OutputPaths:       []string{"stdout"},
+		OutputPaths:       []string{"stdout", "log.txt"},
 		ErrorOutputPaths:  []string{"stderr"},
 	}
 	logger = zap.Must(logConfig.Build())
