@@ -3,6 +3,7 @@ package internalhttp
 import (
 	"context"
 	"io"
+	"net"
 	"net/http"
 	"time"
 
@@ -15,8 +16,7 @@ import (
 
 type Server struct {
 	Application Application
-	host        string
-	port        string
+	server      http.Server
 }
 
 type Application interface {
@@ -26,8 +26,10 @@ type Application interface {
 func NewServer(app Application, config *configs.Config) *Server {
 	return &Server{
 		Application: app,
-		host:        config.Host,
-		port:        config.Port,
+		server: http.Server{
+			Addr:              net.JoinHostPort(config.Host, config.Port),
+			ReadHeaderTimeout: 3 * time.Second,
+		},
 	}
 }
 
@@ -37,30 +39,22 @@ func (s *Server) Start(ctx context.Context) error {
 	mux := http.NewServeMux()
 	mux.Handle("/hello", loggingMiddleware(http.HandlerFunc(s.getHello), l))
 
-	addr := s.host + ":" + s.port
-
-	server := &http.Server{
-		Addr:              addr,
-		ReadHeaderTimeout: 3 * time.Second,
-		Handler:           mux,
-	}
+	s.server.Handler = mux
 
 	go func() error {
-		err := server.ListenAndServe()
+		err := s.server.ListenAndServe()
 		if err != nil {
 			return err
 		}
 		return nil
 	}()
-	l.Debug("server started", zap.String("server address", addr))
+	l.Debug("server started", zap.String("server address", s.server.Addr))
 	<-ctx.Done()
 	return nil
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	_ = ctx
-	// TODO
-	return nil
+	return s.server.Shutdown(ctx)
 }
 
 func (s *Server) getHello(w http.ResponseWriter, _ *http.Request) {

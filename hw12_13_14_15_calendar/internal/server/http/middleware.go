@@ -1,9 +1,10 @@
 package internalhttp
 
 import (
-	"go.uber.org/zap"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 func loggingMiddleware(next http.Handler, l *zap.Logger) http.Handler {
