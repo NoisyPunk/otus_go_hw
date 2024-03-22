@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -28,7 +29,9 @@ func main() {
 
 	config, err := configs.GetConfig(configFile)
 	if err != nil {
-		panic(err)
+		fmt.Printf("can't get config from config file: %s", err.Error())
+		cancel()
+		os.Exit(1) //nolint:gocritic
 	}
 
 	log := logger.New(config.LogLevel)
@@ -54,6 +57,6 @@ func main() {
 	if err := server.Start(ctx); err != nil {
 		log.Error("failed to start http server: " + err.Error())
 		cancel()
-		os.Exit(1) //nolint:gocritic
+		os.Exit(1)
 	}
 }
