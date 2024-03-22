@@ -22,6 +22,16 @@ run-img: build-img
 version: build
 	$(BIN) version
 
+generate:
+	rm -rf api/grpc/pb
+	mkdir -p api/grpc/pb
+
+	protoc \
+		--proto_path=api/grpc/ \
+		--go_out=api/grpc/pb \
+		--go-grpc_out=api/grpc/pb \
+		api/grpc/*.proto
+
 test:
 	docker-compose up -d \
 	&& go install 'github.com/pressly/goose/cmd/goose@latest' \
