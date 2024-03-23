@@ -1,0 +1,12 @@
+# server
+host: "127.0.0.1"
+port: "8182"
+
+# logger
+logLevel: "debug"
+
+# storage
+inmemStore: false
+
+postgresDsn: "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable"
+

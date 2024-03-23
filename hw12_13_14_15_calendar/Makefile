@@ -8,7 +8,7 @@ build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/calendar
 
 run: build
-	$(BIN) -config ./configs/config.toml
+	$(BIN) -config ./configs/config.yaml
 
 build-img:
 	docker build \
@@ -23,10 +23,14 @@ version: build
 	$(BIN) version
 
 test:
-	go test -race ./internal/... ./pkg/...
+	docker-compose up -d \
+	&& go install 'github.com/pressly/goose/cmd/goose@latest' \
+	&& goose -dir migrations postgres "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable" up \
+	&& go test -race ./internal/... \
+	&& docker-compose down -v
 
 install-lint-deps:
-	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.50.1
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 lint: install-lint-deps
 	golangci-lint run ./...

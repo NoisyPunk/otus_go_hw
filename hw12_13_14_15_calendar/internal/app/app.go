@@ -2,25 +2,36 @@ package app
 
 import (
 	"context"
+
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
+	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
+	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
-type App struct { // TODO
+type App struct {
+	Storage storage.Storage
 }
 
-type Logger interface { // TODO
+func New(logger *zap.Logger, config *configs.Config) *App {
+	var store storage.Storage
+
+	switch {
+	case config.InmemStore:
+		logger.Debug("inmem storage is used for server")
+		store = memorystorage.New()
+	default:
+		logger.Debug("database storage is used for server")
+		store = sqlstorage.New()
+	}
+
+	return &App{
+		Storage: store,
+	}
 }
 
-type Storage interface { // TODO
+func (a *App) CreateEvent(ctx context.Context, event storage.Event, userID uuid.UUID) (uuid.UUID, error) {
+	return a.Storage.Create(ctx, event, userID)
 }
-
-func New(logger Logger, storage Storage) *App {
-	return &App{}
-}
-
-func (a *App) CreateEvent(ctx context.Context, id, title string) error {
-	// TODO
-	return nil
-	// return a.storage.CreateEvent(storage.Event{ID: id, Title: title})
-}
-
-// TODO

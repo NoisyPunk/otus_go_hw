@@ -1,20 +1,57 @@
 package logger
 
-import "fmt"
+import (
+	"context"
 
-type Logger struct { // TODO
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
+
+var (
+	logger    *zap.Logger
+	loggerKey lkey
+)
+
+type lkey struct{}
+
+func ContextLogger(ctx context.Context, l *zap.Logger) context.Context {
+	return context.WithValue(ctx, loggerKey, l)
 }
 
-func New(level string) *Logger {
-	return &Logger{}
+func FromContext(ctx context.Context) *zap.Logger {
+	if l, ok := ctx.Value(loggerKey).(*zap.Logger); ok {
+		return l
+	}
+	return zap.L()
 }
 
-func (l Logger) Info(msg string) {
-	fmt.Println(msg)
+func New(level string) *zap.Logger {
+	logConfig := zap.Config{
+		Level:             zap.NewAtomicLevelAt(logLevel(level)),
+		Development:       true,
+		DisableCaller:     true,
+		DisableStacktrace: true,
+		Encoding:          "json",
+		EncoderConfig:     zap.NewProductionEncoderConfig(),
+		OutputPaths:       []string{"stdout", "log.txt"},
+		ErrorOutputPaths:  []string{"stderr"},
+	}
+	logger = zap.Must(logConfig.Build())
+
+	return logger
 }
 
-func (l Logger) Error(msg string) {
-	// TODO
+func logLevel(level string) zapcore.Level {
+	switch level {
+	case "error":
+		return zapcore.ErrorLevel
+	case "debug":
+		return zapcore.DebugLevel
+	case "warn":
+		return zapcore.WarnLevel
+	case "info":
+		return zapcore.InfoLevel
+	default:
+		return zapcore.DebugLevel
+	}
 }
-
-// TODO
