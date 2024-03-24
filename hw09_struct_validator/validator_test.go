@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type UserRole string
 
-// Test the function on different structures and other types.
 type (
 	User struct {
 		ID     string `json:"id" validate:"len:36"`
@@ -24,6 +25,10 @@ type (
 		Version string `validate:"len:5"`
 	}
 
+	Codes struct {
+		Code []int `validate:"in:350,12,22"`
+	}
+
 	Token struct {
 		Header    []byte
 		Payload   []byte
@@ -36,25 +41,112 @@ type (
 	}
 )
 
-func TestValidate(t *testing.T) {
+func TestValidateErrors(t *testing.T) {
 	tests := []struct {
 		in          interface{}
 		expectedErr error
 	}{
 		{
-			// Place your code here.
+			in: Response{
+				Code: 201,
+				Body: "test",
+			},
+			expectedErr: ErrNotInRange,
 		},
-		// ...
-		// Place your code here.
+		{
+			in: User{
+				Phones: []string{"92000000000", "92000000001", "920000000023"},
+			},
+			expectedErr: ErrLenIsNotEqual,
+		},
+		{
+			in: User{
+				ID: "ranmcurymipmrtomhyacepvnpdwaslhsrwwsasdas",
+			},
+			expectedErr: ErrLenIsNotEqual,
+		},
+		{
+			in: User{
+				Age: 11,
+			},
+			expectedErr: ErrValueIsLessThenMin,
+		},
+		{
+			in: User{
+				Age: 102,
+			},
+			expectedErr: ErrValueIsMoreThenMax,
+		},
+		{
+			in: User{
+				Email: "test",
+			},
+			expectedErr: ErrRegExpIsNotEqual,
+		},
+		{
+			in: Codes{
+				Code: []int{1, 22, 12},
+			},
+			expectedErr: ErrNotInRange,
+		},
 	}
 
 	for i, tt := range tests {
 		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
 			tt := tt
 			t.Parallel()
+			err := Validate(tt.in)
+			var testErr ValidationErrors
+			require.ErrorAs(t, err, &testErr)
+			require.EqualError(t, err, tt.expectedErr.Error())
+		})
+	}
+}
 
-			// Place your code here.
-			_ = tt
+func TestRegularErrors(t *testing.T) {
+	tests := []struct {
+		in          interface{}
+		expectedErr error
+	}{
+		{
+			in:          "test",
+			expectedErr: ErrInterfaceNotStruct,
+		},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+			tt := tt
+			t.Parallel()
+			err := Validate(tt.in)
+			require.EqualError(t, err, tt.expectedErr.Error())
+		})
+	}
+}
+
+func TestSuccessFlow(t *testing.T) {
+	tests := []struct {
+		in          interface{}
+		expectedErr error
+	}{
+		{
+			in: App{
+				Version: "adsad",
+			},
+		},
+		{
+			in: Token{
+				Header: []byte{},
+			},
+		},
+	}
+
+	for i, tt := range tests {
+		t.Run(fmt.Sprintf("case %d", i), func(t *testing.T) {
+			tt := tt
+			t.Parallel()
+			err := Validate(tt.in)
+			require.NoError(t, err)
 		})
 	}
 }
