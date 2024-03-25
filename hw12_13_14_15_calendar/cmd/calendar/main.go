@@ -12,6 +12,7 @@ import (
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
+	internalgrpc "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
 )
 
@@ -40,6 +41,7 @@ func main() {
 	calendar := app.New(log, config)
 
 	server := internalhttp.NewServer(calendar, config)
+	grpcServer := internalgrpc.NewGRPCServer()
 
 	go func() {
 		<-ctx.Done()

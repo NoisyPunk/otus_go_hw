@@ -2,6 +2,7 @@ package internalhttp
 
 import (
 	"context"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"io"
 	"net"
 	"net/http"
@@ -9,21 +10,15 @@ import (
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
-	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
 type Server struct {
-	Application Application
+	Application app.Application
 	server      http.Server
 }
 
-type Application interface {
-	CreateEvent(ctx context.Context, data storage.Event, userID uuid.UUID) (uuid.UUID, error)
-}
-
-func NewServer(app Application, config *configs.Config) *Server {
+func NewServer(app app.Application, config *configs.Config) *Server {
 	return &Server{
 		Application: app,
 		server: http.Server{

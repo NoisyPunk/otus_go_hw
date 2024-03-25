@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
@@ -13,6 +12,10 @@ import (
 
 type App struct {
 	Storage storage.Storage
+}
+
+type Application interface {
+	CreateEvent(ctx context.Context, data storage.Event, userID uuid.UUID) (uuid.UUID, error)
 }
 
 func New(logger *zap.Logger, config *configs.Config) *App {
