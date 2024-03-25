@@ -4,8 +4,10 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -41,9 +43,12 @@ func main() {
 	calendar := app.New(log, config)
 
 	server := internalhttp.NewServer(calendar, config)
-	grpcServer := internalgrpc.NewGRPCServer()
+	grpcServer := internalgrpc.NewGRPCServer(config.EventServerPort)
+
+	wg := sync.WaitGroup{}
 
 	go func() {
+		wg.Add(1)
 		<-ctx.Done()
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
@@ -52,13 +57,26 @@ func main() {
 		if err := server.Stop(ctx); err != nil {
 			log.Error("failed to stop http server: " + err.Error())
 		}
+		grpcServer.Stop()
+		wg.Done()
+	}()
+
+	go func() {
+		if err = server.Start(ctx); err != nil {
+			log.Error("failed to start http server", zap.String("error", err.Error()))
+			cancel()
+			os.Exit(1)
+		}
+	}()
+
+	go func() {
+		if err = grpcServer.Start(ctx); err != nil {
+			log.Error("failed to start grpc server", zap.String("error", err.Error()))
+			cancel()
+			os.Exit(1)
+		}
 	}()
 
 	log.Info("calendar is running...")
-
-	if err := server.Start(ctx); err != nil {
-		log.Error("failed to start http server: " + err.Error())
-		cancel()
-		os.Exit(1)
-	}
+	wg.Wait()
 }

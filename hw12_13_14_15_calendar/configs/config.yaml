@@ -1,6 +1,7 @@
 # server
 host: "127.0.0.1"
 port: "8182"
+eventServerPort: ":8185"
 
 # logger
 logLevel: "debug"

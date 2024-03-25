@@ -2,19 +2,23 @@ package internalgrpc
 
 import (
 	"context"
+	"fmt"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc/pb"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"net"
 )
 
 type EventServer struct {
 	server *grpc.Server
+	port   string
 	pb.UnimplementedEventsServer
 }
 
 func (e EventServer) CreateEvent(ctx context.Context, request *pb.CreateEventRequest) (*pb.EventResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	fmt.Println(request)
+	return nil, nil
 }
 
 func (e EventServer) UpdateEvent(ctx context.Context, request *pb.EventActionRequest) (*pb.EventResponse, error) {
@@ -42,18 +46,35 @@ func (e EventServer) MonthlyEventList(ctx context.Context, request *pb.IntervalL
 	panic("implement me")
 }
 
-func NewGRPCServer() *EventServer {
-	return new(EventServer)
+func NewGRPCServer(port string) *EventServer {
+	return &EventServer{
+		server:                    grpc.NewServer(),
+		port:                      port,
+		UnimplementedEventsServer: pb.UnimplementedEventsServer{},
+	}
 }
 
-func Run(port string) error {
-	eventServer := NewGRPCServer()
-	eventServer.server = grpc.NewServer()
-	listener, err := net.Listen("tcp", port)
+func (e EventServer) Start(ctx context.Context) error {
+	l := logger.FromContext(ctx)
+
+	listener, err := net.Listen("tcp", e.port)
 	if err != nil {
 		return err
 	}
-	pb.RegisterEventsServer(eventServer.server, eventServer)
+	pb.RegisterEventsServer(e.server, e)
 
-	return eventServer.server.Serve(listener)
+	go func() error {
+		err = e.server.Serve(listener)
+		if err != nil {
+			return err
+		}
+		return nil
+	}()
+	l.Debug("grpc server started", zap.String("server port", e.port))
+	<-ctx.Done()
+	return nil
+}
+
+func (e EventServer) Stop() {
+	e.server.GracefulStop()
 }

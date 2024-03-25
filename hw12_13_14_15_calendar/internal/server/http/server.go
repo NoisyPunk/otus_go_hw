@@ -43,7 +43,7 @@ func (s *Server) Start(ctx context.Context) error {
 		}
 		return nil
 	}()
-	l.Debug("server started", zap.String("server address", s.server.Addr))
+	l.Debug("http server started", zap.String("server address", s.server.Addr))
 	<-ctx.Done()
 	return nil
 }
