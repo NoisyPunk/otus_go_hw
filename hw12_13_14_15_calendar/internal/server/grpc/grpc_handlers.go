@@ -39,14 +39,53 @@ func (e GRPCEventServer) CreateEvent(ctx context.Context, request *pb.CreateEven
 	return response, nil
 }
 
-func (e GRPCEventServer) UpdateEvent(ctx context.Context, request *pb.EventActionRequest) (*pb.EventResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (e GRPCEventServer) UpdateEvent(ctx context.Context, request *pb.EventUpdateRequest) (*pb.EventUpdateResponse, error) {
+	eventID, err := uuid.Parse(request.EventId)
+	if err != nil {
+		return nil, err
+	}
+	userID, err := uuid.Parse(request.Event.UserId)
+	if err != nil {
+		return nil, err
+	}
+	eventData := storage.Event{
+		ID:           eventID,
+		Title:        request.Event.Title,
+		DateAndTime:  request.Event.DateAndTime.AsTime(),
+		Duration:     request.Event.Duration.AsDuration(),
+		Description:  request.Event.Description,
+		UserID:       userID,
+		TimeToNotify: request.Event.TimeToNotify.AsDuration(),
+	}
+
+	err = e.application.UpdateEvent(ctx, eventData.ID, eventData)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.EventUpdateResponse{
+		EventId: eventData.ID.String(),
+		Message: "event successfully updated",
+	}
+	return response, nil
 }
 
-func (e GRPCEventServer) DeleteEvent(ctx context.Context, request *pb.EventActionRequest) (*pb.EventDeletionResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (e GRPCEventServer) DeleteEvent(ctx context.Context, request *pb.EventDeletionRequest) (*pb.EventDeletionResponse, error) {
+	eventID, err := uuid.Parse(request.EventId)
+	if err != nil {
+		return nil, err
+	}
+
+	err = e.application.DeleteEvent(ctx, eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.EventDeletionResponse{
+		EventId: eventID.String(),
+		Message: "event successfully deleted",
+	}
+	return response, nil
 }
 
 func (e GRPCEventServer) DailyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {

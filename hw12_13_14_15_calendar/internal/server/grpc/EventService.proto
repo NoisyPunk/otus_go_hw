@@ -8,8 +8,8 @@ option go_package = "./;pb";
 
 service Events {
   rpc CreateEvent (CreateEventRequest) returns (EventResponse) {}
-  rpc UpdateEvent (EventActionRequest) returns (EventResponse) {}
-  rpc DeleteEvent (EventActionRequest) returns (EventDeletionResponse) {}
+  rpc UpdateEvent (EventUpdateRequest) returns (EventUpdateResponse) {}
+  rpc DeleteEvent (EventDeletionRequest) returns (EventDeletionResponse) {}
   rpc DailyEventList (IntervalListRequest) returns (EventList) {}
   rpc WeeklyEventList (IntervalListRequest) returns (EventList) {}
   rpc MonthlyEventList (IntervalListRequest) returns (EventList) {}
@@ -34,9 +34,14 @@ message EventResponse {
   google.protobuf.Duration time_to_notify = 7;
 }
 
-message EventActionRequest {
+message EventUpdateRequest {
   string event_id = 1;
   CreateEventRequest event = 2;
+}
+
+message EventUpdateResponse {
+  string event_id = 1;
+  string message = 2;
 }
 
 message EventDeletionRequest {

@@ -23,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EventsClient interface {
 	CreateEvent(ctx context.Context, in *CreateEventRequest, opts ...grpc.CallOption) (*EventResponse, error)
-	UpdateEvent(ctx context.Context, in *EventActionRequest, opts ...grpc.CallOption) (*EventResponse, error)
-	DeleteEvent(ctx context.Context, in *EventActionRequest, opts ...grpc.CallOption) (*EventDeletionResponse, error)
+	UpdateEvent(ctx context.Context, in *EventUpdateRequest, opts ...grpc.CallOption) (*EventUpdateResponse, error)
+	DeleteEvent(ctx context.Context, in *EventDeletionRequest, opts ...grpc.CallOption) (*EventDeletionResponse, error)
 	DailyEventList(ctx context.Context, in *IntervalListRequest, opts ...grpc.CallOption) (*EventList, error)
 	WeeklyEventList(ctx context.Context, in *IntervalListRequest, opts ...grpc.CallOption) (*EventList, error)
 	MonthlyEventList(ctx context.Context, in *IntervalListRequest, opts ...grpc.CallOption) (*EventList, error)
@@ -47,8 +47,8 @@ func (c *eventsClient) CreateEvent(ctx context.Context, in *CreateEventRequest, 
 	return out, nil
 }
 
-func (c *eventsClient) UpdateEvent(ctx context.Context, in *EventActionRequest, opts ...grpc.CallOption) (*EventResponse, error) {
-	out := new(EventResponse)
+func (c *eventsClient) UpdateEvent(ctx context.Context, in *EventUpdateRequest, opts ...grpc.CallOption) (*EventUpdateResponse, error) {
+	out := new(EventUpdateResponse)
 	err := c.cc.Invoke(ctx, "/event.Events/UpdateEvent", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (c *eventsClient) UpdateEvent(ctx context.Context, in *EventActionRequest, 
 	return out, nil
 }
 
-func (c *eventsClient) DeleteEvent(ctx context.Context, in *EventActionRequest, opts ...grpc.CallOption) (*EventDeletionResponse, error) {
+func (c *eventsClient) DeleteEvent(ctx context.Context, in *EventDeletionRequest, opts ...grpc.CallOption) (*EventDeletionResponse, error) {
 	out := new(EventDeletionResponse)
 	err := c.cc.Invoke(ctx, "/event.Events/DeleteEvent", in, out, opts...)
 	if err != nil {
@@ -97,8 +97,8 @@ func (c *eventsClient) MonthlyEventList(ctx context.Context, in *IntervalListReq
 // for forward compatibility
 type EventsServer interface {
 	CreateEvent(context.Context, *CreateEventRequest) (*EventResponse, error)
-	UpdateEvent(context.Context, *EventActionRequest) (*EventResponse, error)
-	DeleteEvent(context.Context, *EventActionRequest) (*EventDeletionResponse, error)
+	UpdateEvent(context.Context, *EventUpdateRequest) (*EventUpdateResponse, error)
+	DeleteEvent(context.Context, *EventDeletionRequest) (*EventDeletionResponse, error)
 	DailyEventList(context.Context, *IntervalListRequest) (*EventList, error)
 	WeeklyEventList(context.Context, *IntervalListRequest) (*EventList, error)
 	MonthlyEventList(context.Context, *IntervalListRequest) (*EventList, error)
@@ -112,10 +112,10 @@ type UnimplementedEventsServer struct {
 func (UnimplementedEventsServer) CreateEvent(context.Context, *CreateEventRequest) (*EventResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEvent not implemented")
 }
-func (UnimplementedEventsServer) UpdateEvent(context.Context, *EventActionRequest) (*EventResponse, error) {
+func (UnimplementedEventsServer) UpdateEvent(context.Context, *EventUpdateRequest) (*EventUpdateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateEvent not implemented")
 }
-func (UnimplementedEventsServer) DeleteEvent(context.Context, *EventActionRequest) (*EventDeletionResponse, error) {
+func (UnimplementedEventsServer) DeleteEvent(context.Context, *EventDeletionRequest) (*EventDeletionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEvent not implemented")
 }
 func (UnimplementedEventsServer) DailyEventList(context.Context, *IntervalListRequest) (*EventList, error) {
@@ -159,7 +159,7 @@ func _Events_CreateEvent_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _Events_UpdateEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EventActionRequest)
+	in := new(EventUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -171,13 +171,13 @@ func _Events_UpdateEvent_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/event.Events/UpdateEvent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventsServer).UpdateEvent(ctx, req.(*EventActionRequest))
+		return srv.(EventsServer).UpdateEvent(ctx, req.(*EventUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Events_DeleteEvent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EventActionRequest)
+	in := new(EventDeletionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ func _Events_DeleteEvent_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/event.Events/DeleteEvent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EventsServer).DeleteEvent(ctx, req.(*EventActionRequest))
+		return srv.(EventsServer).DeleteEvent(ctx, req.(*EventDeletionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
