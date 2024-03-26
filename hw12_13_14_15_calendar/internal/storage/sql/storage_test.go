@@ -77,7 +77,7 @@ func TestEvent(t *testing.T) {
 
 		var events []*storage.Event
 		query := `SELECT * FROM events where id = $1`
-		err = DBstorage.db.Select(&events, query, id)
+		err = DBstorage.db.Select(&events, query, id.ID)
 		require.NoError(t, err)
 		require.Equal(t, &event, events[0])
 	})

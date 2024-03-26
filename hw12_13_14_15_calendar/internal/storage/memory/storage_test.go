@@ -34,9 +34,9 @@ func TestStorage(t *testing.T) {
 		id, err := memStorage.Create(ctx, event, userID)
 		require.NotNil(t, id)
 
-		event.ID = id
+		event.ID = id.ID
 		require.NoError(t, err)
-		require.Equal(t, memStorage.storage[id], event)
+		require.Equal(t, memStorage.storage[id.ID], event)
 	})
 
 	t.Run("create daily list", func(t *testing.T) {
