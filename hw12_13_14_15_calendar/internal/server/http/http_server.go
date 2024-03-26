@@ -13,14 +13,15 @@ import (
 	"go.uber.org/zap"
 )
 
-type Server struct {
-	Application app.Application
+type HTTPEventServer struct {
+	ctx         context.Context
+	application app.Application
 	server      http.Server
 }
 
-func NewServer(app app.Application, config *configs.Config) *Server {
-	return &Server{
-		Application: app,
+func NewServer(app app.Application, config *configs.Config) *HTTPEventServer {
+	return &HTTPEventServer{
+		application: app,
 		server: http.Server{
 			Addr:              net.JoinHostPort(config.Host, config.Port),
 			ReadHeaderTimeout: 3 * time.Second,
@@ -28,7 +29,7 @@ func NewServer(app app.Application, config *configs.Config) *Server {
 	}
 }
 
-func (s *Server) Start(ctx context.Context) error {
+func (s *HTTPEventServer) Start(ctx context.Context) error {
 	l := logger.FromContext(ctx)
 
 	mux := http.NewServeMux()
@@ -48,10 +49,10 @@ func (s *Server) Start(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) Stop(ctx context.Context) error {
+func (s *HTTPEventServer) Stop(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
 }
 
-func (s *Server) getHello(w http.ResponseWriter, _ *http.Request) {
+func (s *HTTPEventServer) getHello(w http.ResponseWriter, _ *http.Request) {
 	io.WriteString(w, "Hello, OTUS!\n")
 }

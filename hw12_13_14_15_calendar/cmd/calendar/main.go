@@ -40,10 +40,15 @@ func main() {
 	log := logger.New(config.LogLevel)
 	ctx = logger.ContextLogger(ctx, log)
 
-	calendar := app.New(log, config)
+	calendar, err := app.New(ctx, config)
+	if err != nil {
+		fmt.Printf("can't connect to db: %s", err.Error())
+		cancel()
+		os.Exit(1)
+	}
 
 	server := internalhttp.NewServer(calendar, config)
-	grpcServer := internalgrpc.NewGRPCServer(config.EventServerPort)
+	grpcServer := internalgrpc.NewGRPCServer(calendar, config.EventServerPort)
 
 	wg := sync.WaitGroup{}
 

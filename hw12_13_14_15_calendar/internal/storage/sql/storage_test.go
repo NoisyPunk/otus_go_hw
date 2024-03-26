@@ -37,7 +37,7 @@ func TestEvent(t *testing.T) {
 		id, err := DBstorage.Create(ctx, expectedEvent, userID)
 		require.NotNil(t, id)
 
-		expectedEvent.ID = id
+		expectedEvent.ID = id.ID
 		require.NoError(t, err)
 
 		var events []*storage.Event
@@ -63,7 +63,7 @@ func TestEvent(t *testing.T) {
 		require.NotNil(t, id)
 
 		event := storage.Event{
-			ID:           id,
+			ID:           id.ID,
 			Title:        "Test Title Updated",
 			DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
 			Duration:     15 * time.Minute,
@@ -72,7 +72,7 @@ func TestEvent(t *testing.T) {
 			TimeToNotify: 10 * time.Minute,
 		}
 
-		err = DBstorage.Update(ctx, id, event)
+		err = DBstorage.Update(ctx, id.ID, event)
 		require.NoError(t, err)
 
 		var events []*storage.Event
@@ -97,7 +97,7 @@ func TestEvent(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, id)
 
-		err = DBstorage.Delete(ctx, id)
+		err = DBstorage.Delete(ctx, id.ID)
 		require.NoError(t, err)
 
 		query := `SELECT * FROM events where id = $1`

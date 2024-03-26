@@ -39,7 +39,7 @@ func (s *Storage) Close() error {
 	return s.db.Close()
 }
 
-func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UUID) (uuid.UUID, error) {
+func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UUID) (storage.Event, error) {
 	l := logger.FromContext(ctx)
 
 	query := `INSERT INTO events (id, user_id, title, date_and_time, duration, description, time_to_notify) 
@@ -59,10 +59,10 @@ func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UU
 	_, err := s.db.NamedQuery(query, event)
 	if err != nil {
 		l.Error(err.Error(), zap.String("event_id:", eventID.String()))
-		return uuid.UUID{}, errors.Wrap(err, ErrCreateEvent.Error())
+		return storage.Event{}, errors.Wrap(err, ErrCreateEvent.Error())
 	}
 	l.Info("event created:", zap.String("event_id", eventID.String()))
-	return eventID, nil
+	return event, nil
 }
 
 func (s *Storage) Update(ctx context.Context, eventID uuid.UUID, event storage.Event) error {

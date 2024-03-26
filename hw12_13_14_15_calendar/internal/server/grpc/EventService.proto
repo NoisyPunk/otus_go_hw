@@ -3,6 +3,7 @@ syntax = "proto3";
 package event;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 option go_package = "./;pb";
 
 service Events {
@@ -17,28 +18,34 @@ service Events {
 message CreateEventRequest {
   string title = 1;
   google.protobuf.Timestamp date_and_time = 2;
-  google.protobuf.Timestamp duration = 3;
+  google.protobuf.Duration duration = 3;
   string description = 4;
   string user_id = 5;
-  google.protobuf.Timestamp time_to_notify = 6;
+  google.protobuf.Duration time_to_notify = 6;
 }
 
 message EventResponse {
   string event_id = 1;
   string title = 2;
   google.protobuf.Timestamp date_and_time = 3;
-  google.protobuf.Timestamp duration = 4;
+  google.protobuf.Duration duration = 4;
   string description = 5;
   string user_id = 6;
-  google.protobuf.Timestamp time_to_notify = 7;
+  google.protobuf.Duration time_to_notify = 7;
 }
 
 message EventActionRequest {
+  string event_id = 1;
+  CreateEventRequest event = 2;
+}
+
+message EventDeletionRequest {
   string event_id = 1;
 }
 
 message EventDeletionResponse {
   string event_id = 1;
+  string message = 2;
 }
 
 message IntervalListRequest {

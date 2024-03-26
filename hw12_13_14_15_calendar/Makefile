@@ -27,10 +27,10 @@ generate:
 	mkdir -p api/grpc/pb
 
 	protoc \
-		--proto_path=api/grpc/ \
-		--go_out=api/grpc/pb \
-		--go-grpc_out=api/grpc/pb \
-		api/grpc/*.proto
+		--proto_path=internal/server/grpc/ \
+		--go_out=internal/server/grpc/pb \
+		--go-grpc_out=internal/server/grpc/pb \
+		internal/server/grpc/*.proto
 
 test:
 	docker-compose up -d \
