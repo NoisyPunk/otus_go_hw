@@ -9,6 +9,12 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+const (
+	day   = "day"
+	week  = "week"
+	month = "month"
+)
+
 func (e GRPCEventServer) CreateEvent(ctx context.Context, request *pb.CreateEventRequest) (*pb.EventResponse, error) {
 	userID, err := uuid.Parse(request.UserId)
 	if err != nil {
@@ -89,16 +95,56 @@ func (e GRPCEventServer) DeleteEvent(ctx context.Context, request *pb.EventDelet
 }
 
 func (e GRPCEventServer) DailyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {
-	//TODO implement me
-	panic("implement me")
+	return e.collectEventList(ctx, request, day)
 }
 
 func (e GRPCEventServer) WeeklyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {
-	//TODO implement me
-	panic("implement me")
+	return e.collectEventList(ctx, request, week)
 }
 
 func (e GRPCEventServer) MonthlyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {
-	//TODO implement me
-	panic("implement me")
+	return e.collectEventList(ctx, request, month)
+}
+
+func (e GRPCEventServer) collectEventList(ctx context.Context, request *pb.IntervalListRequest, period string) (*pb.EventList, error) {
+	userID, err := uuid.Parse(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	dateTime := request.DateAndTime.AsTime()
+
+	var events []storage.Event
+	switch period {
+	case day:
+		events, err = e.application.EventsDailyList(ctx, dateTime, userID)
+		if err != nil {
+			return nil, err
+		}
+	case week:
+		events, err = e.application.EventsWeeklyList(ctx, dateTime, userID)
+		if err != nil {
+			return nil, err
+		}
+	case month:
+		events, err = e.application.EventsMonthlyList(ctx, dateTime, userID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	eventList := make([]*pb.EventResponse, 0)
+
+	for _, event := range events {
+		response := pb.EventResponse{
+			EventId:      event.ID.String(),
+			Title:        event.Title,
+			DateAndTime:  timestamppb.New(event.DateAndTime),
+			Duration:     durationpb.New(event.Duration),
+			Description:  event.Description,
+			UserId:       event.UserID.String(),
+			TimeToNotify: durationpb.New(event.TimeToNotify),
+		}
+		eventList = append(eventList, &response)
+	}
+	return &pb.EventList{EventList: eventList}, nil
 }
