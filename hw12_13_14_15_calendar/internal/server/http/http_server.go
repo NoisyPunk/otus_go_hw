@@ -2,18 +2,17 @@ package internalhttp
 
 import (
 	"context"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"net"
 	"net/http"
 	"time"
 
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"go.uber.org/zap"
 )
 
 type HTTPEventServer struct {
-	ctx         context.Context
 	application app.Application
 	logger      *zap.Logger
 	server      http.Server

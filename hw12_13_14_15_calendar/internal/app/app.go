@@ -2,14 +2,15 @@ package app
 
 import (
 	"context"
+	"sync"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/google/uuid"
-	"sync"
-	"time"
 )
 
 type App struct {
@@ -65,10 +66,14 @@ func (a *App) EventsDailyList(ctx context.Context, date time.Time, userID uuid.U
 	return a.Storage.DailyList(ctx, date, userID)
 }
 
-func (a *App) EventsWeeklyList(ctx context.Context, startWeekDate time.Time, userID uuid.UUID) ([]storage.Event, error) {
+func (a *App) EventsWeeklyList(ctx context.Context,
+	startWeekDate time.Time, userID uuid.UUID,
+) ([]storage.Event, error) {
 	return a.Storage.WeeklyList(ctx, startWeekDate, userID)
 }
 
-func (a *App) EventsMonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error) {
+func (a *App) EventsMonthlyList(ctx context.Context,
+	startMonthDate time.Time, userID uuid.UUID,
+) ([]storage.Event, error) {
 	return a.Storage.MonthlyList(ctx, startMonthDate, userID)
 }

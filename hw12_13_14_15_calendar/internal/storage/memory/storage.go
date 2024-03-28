@@ -2,13 +2,13 @@ package memorystorage
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"sync"
 	"time"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 

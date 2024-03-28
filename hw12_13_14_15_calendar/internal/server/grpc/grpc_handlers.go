@@ -2,6 +2,7 @@ package internalgrpc
 
 import (
 	"context"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc/pb"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
@@ -15,7 +16,9 @@ const (
 	month = "month"
 )
 
-func (e GRPCEventServer) CreateEvent(ctx context.Context, request *pb.CreateEventRequest) (*pb.EventResponse, error) {
+func (e GRPCEventServer) CreateEvent(ctx context.Context,
+	request *pb.CreateEventRequest,
+) (*pb.EventResponse, error) {
 	userID, err := uuid.Parse(request.UserId)
 	if err != nil {
 		return nil, err
@@ -45,7 +48,9 @@ func (e GRPCEventServer) CreateEvent(ctx context.Context, request *pb.CreateEven
 	return response, nil
 }
 
-func (e GRPCEventServer) UpdateEvent(ctx context.Context, request *pb.EventUpdateRequest) (*pb.EventUpdateResponse, error) {
+func (e GRPCEventServer) UpdateEvent(ctx context.Context,
+	request *pb.EventUpdateRequest,
+) (*pb.EventUpdateResponse, error) {
 	eventID, err := uuid.Parse(request.EventId)
 	if err != nil {
 		return nil, err
@@ -76,7 +81,9 @@ func (e GRPCEventServer) UpdateEvent(ctx context.Context, request *pb.EventUpdat
 	return response, nil
 }
 
-func (e GRPCEventServer) DeleteEvent(ctx context.Context, request *pb.EventDeletionRequest) (*pb.EventDeletionResponse, error) {
+func (e GRPCEventServer) DeleteEvent(ctx context.Context,
+	request *pb.EventDeletionRequest,
+) (*pb.EventDeletionResponse, error) {
 	eventID, err := uuid.Parse(request.EventId)
 	if err != nil {
 		return nil, err
@@ -94,19 +101,27 @@ func (e GRPCEventServer) DeleteEvent(ctx context.Context, request *pb.EventDelet
 	return response, nil
 }
 
-func (e GRPCEventServer) DailyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {
+func (e GRPCEventServer) DailyEventList(ctx context.Context,
+	request *pb.IntervalListRequest,
+) (*pb.EventList, error) {
 	return e.collectEventList(ctx, request, day)
 }
 
-func (e GRPCEventServer) WeeklyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {
+func (e GRPCEventServer) WeeklyEventList(ctx context.Context,
+	request *pb.IntervalListRequest,
+) (*pb.EventList, error) {
 	return e.collectEventList(ctx, request, week)
 }
 
-func (e GRPCEventServer) MonthlyEventList(ctx context.Context, request *pb.IntervalListRequest) (*pb.EventList, error) {
+func (e GRPCEventServer) MonthlyEventList(ctx context.Context,
+	request *pb.IntervalListRequest,
+) (*pb.EventList, error) {
 	return e.collectEventList(ctx, request, month)
 }
 
-func (e GRPCEventServer) collectEventList(ctx context.Context, request *pb.IntervalListRequest, period string) (*pb.EventList, error) {
+func (e GRPCEventServer) collectEventList(ctx context.Context,
+	request *pb.IntervalListRequest, period string,
+) (*pb.EventList, error) {
 	userID, err := uuid.Parse(request.UserId)
 	if err != nil {
 		return nil, err

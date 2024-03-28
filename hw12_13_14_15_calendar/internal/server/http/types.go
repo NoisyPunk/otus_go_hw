@@ -1,47 +1,48 @@
 package internalhttp
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type CreateEventRequest struct {
 	Title        string        `json:"title"`
-	DateAndTime  time.Time     `json:"date_and_time"`
+	DateAndTime  time.Time     `json:"dateAndTime"`
 	Duration     time.Duration `json:"duration"`
 	Description  string        `json:"description"`
-	UserID       uuid.UUID     `json:"user_id"`
-	TimeToNotify time.Duration `json:"time_to_notify"`
+	UserID       uuid.UUID     `json:"userId"`
+	TimeToNotify time.Duration `json:"timeToNotify"`
 }
 
 type CreateEventResponse struct {
 	Message      string        `json:"message"`
 	ID           uuid.UUID     `json:"id"`
 	Title        string        `json:"title"`
-	DateAndTime  time.Time     `json:"date_and_time"`
+	DateAndTime  time.Time     `json:"dateAndTime"`
 	Duration     time.Duration `json:"duration"`
 	Description  string        `json:"description"`
-	UserID       uuid.UUID     `json:"user_id"`
-	TimeToNotify time.Duration `json:"time_to_notify"`
+	UserID       uuid.UUID     `json:"userId"`
+	TimeToNotify time.Duration `json:"timeToNotify"`
 }
 
 type UpdateEventRequest struct {
-	EventID uuid.UUID          `json:"event_id"`
+	EventID uuid.UUID          `json:"eventId"`
 	Event   CreateEventRequest `json:"event"`
 }
 
 type UpdateEventResponse struct {
 	Message string    `json:"message"`
-	EventID uuid.UUID `json:"event_id"`
+	EventID uuid.UUID `json:"eventId"`
 }
 
 type DeleteEventRequest struct {
-	EventID uuid.UUID `json:"event_id"`
+	EventID uuid.UUID `json:"eventId"`
 }
 
 type DeleteEventResponse struct {
 	Message string    `json:"message"`
-	EventID uuid.UUID `json:"event_id"`
+	EventID uuid.UUID `json:"eventId"`
 }
 
 type ErrorResponse struct {
@@ -51,10 +52,10 @@ type ErrorResponse struct {
 }
 
 type EventListRequest struct {
-	DateAndTime time.Time `json:"date_and_time"`
-	UserID      uuid.UUID `json:"user_id"`
+	DateAndTime time.Time `json:"dateAndTime"`
+	UserID      uuid.UUID `json:"userId"`
 }
 
 type EventListResponse struct {
-	EventList []*CreateEventResponse `json:"event_list"`
+	EventList []*CreateEventResponse `json:"eventList"`
 }

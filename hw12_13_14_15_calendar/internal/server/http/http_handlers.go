@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
+
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
+	"go.uber.org/zap"
 )
 
 const (
@@ -59,11 +60,10 @@ func (s *HTTPEventServer) CreateEvent(w http.ResponseWriter, r *http.Request) {
 	resp.Duration = event.Duration
 	resp.Description = event.Description
 	resp.Title = event.Title
-	resp.Message = fmt.Sprintf("event created successfully")
+	resp.Message = "event created successfully"
 
 	w.WriteHeader(http.StatusOK)
 	s.writeResponse(w, resp)
-	return
 }
 
 func (s *HTTPEventServer) UpdateEvent(w http.ResponseWriter, r *http.Request) {
@@ -101,11 +101,10 @@ func (s *HTTPEventServer) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	resp.EventID = req.EventID
-	resp.Message = fmt.Sprintf("event updated successfully")
+	resp.Message = "event updated successfully"
 
 	w.WriteHeader(http.StatusOK)
 	s.writeResponse(w, resp)
-	return
 }
 
 func (s *HTTPEventServer) DeleteEvent(w http.ResponseWriter, r *http.Request) {
@@ -134,11 +133,10 @@ func (s *HTTPEventServer) DeleteEvent(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	resp.EventID = req.EventID
-	resp.Message = fmt.Sprintf("event deleted successfully")
+	resp.Message = "event deleted successfully"
 
 	w.WriteHeader(http.StatusOK)
 	s.writeResponse(w, resp)
-	return
 }
 
 func (s *HTTPEventServer) EventsDailyList(w http.ResponseWriter, r *http.Request) {
@@ -198,13 +196,10 @@ func (s *HTTPEventServer) collectEventList(w http.ResponseWriter, r *http.Reques
 			TimeToNotify: event.TimeToNotify,
 		}
 		resp.EventList = append(resp.EventList, responseItem)
-
 	}
 
 	w.WriteHeader(http.StatusOK)
 	s.writeResponse(w, resp)
-	return
-
 }
 
 func (s *HTTPEventServer) writeResponse(w http.ResponseWriter, resp interface{}) {
@@ -217,7 +212,6 @@ func (s *HTTPEventServer) writeResponse(w http.ResponseWriter, resp interface{})
 		s.logger.Error("response writer error:", zap.String("message:", err.Error()))
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	return
 }
 
 func (s *HTTPEventServer) readRequest(w http.ResponseWriter, r *http.Request) []byte {
