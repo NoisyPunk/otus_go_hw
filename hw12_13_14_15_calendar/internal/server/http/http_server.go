@@ -3,7 +3,6 @@ package internalhttp
 import (
 	"context"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
-	"io"
 	"net"
 	"net/http"
 	"time"
@@ -33,7 +32,12 @@ func (s *HTTPEventServer) Start(ctx context.Context) error {
 	l := logger.FromContext(ctx)
 
 	mux := http.NewServeMux()
-	mux.Handle("/hello", loggingMiddleware(http.HandlerFunc(s.getHello), l))
+	mux.Handle("/create", loggingMiddleware(http.HandlerFunc(s.CreateEvent), l))
+	mux.Handle("/update", loggingMiddleware(http.HandlerFunc(s.UpdateEvent), l))
+	mux.Handle("/delete", loggingMiddleware(http.HandlerFunc(s.DeleteEvent), l))
+	mux.Handle("/daily", loggingMiddleware(http.HandlerFunc(s.EventsDailyList), l))
+	mux.Handle("/weekly", loggingMiddleware(http.HandlerFunc(s.EventsWeeklyList), l))
+	mux.Handle("/monthly", loggingMiddleware(http.HandlerFunc(s.EventsMonthlyList), l))
 
 	s.server.Handler = mux
 
@@ -51,8 +55,4 @@ func (s *HTTPEventServer) Start(ctx context.Context) error {
 
 func (s *HTTPEventServer) Stop(ctx context.Context) error {
 	return s.server.Shutdown(ctx)
-}
-
-func (s *HTTPEventServer) getHello(w http.ResponseWriter, _ *http.Request) {
-	io.WriteString(w, "Hello, OTUS!\n")
 }
