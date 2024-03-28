@@ -47,7 +47,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	server := internalhttp.NewServer(calendar, config)
+	server := internalhttp.NewServer(calendar, config, log)
 	grpcServer := internalgrpc.NewGRPCServer(calendar, config.EventServerPort)
 
 	wg := sync.WaitGroup{}

@@ -23,9 +23,6 @@ type CreateEventResponse struct {
 	Description  string        `json:"description"`
 	UserID       uuid.UUID     `json:"user_id"`
 	TimeToNotify time.Duration `json:"time_to_notify"`
-	Error        struct {
-		Message string `json:"message"`
-	} `json:"error"`
 }
 
 type UpdateEventRequest struct {
@@ -36,9 +33,6 @@ type UpdateEventRequest struct {
 type UpdateEventResponse struct {
 	Message string    `json:"message"`
 	EventID uuid.UUID `json:"event_id"`
-	Error   struct {
-		Message string `json:"message"`
-	} `json:"error"`
 }
 
 type DeleteEventRequest struct {
@@ -48,7 +42,19 @@ type DeleteEventRequest struct {
 type DeleteEventResponse struct {
 	Message string    `json:"message"`
 	EventID uuid.UUID `json:"event_id"`
-	Error   struct {
+}
+
+type ErrorResponse struct {
+	Error struct {
 		Message string `json:"message"`
 	} `json:"error"`
+}
+
+type EventListRequest struct {
+	DateAndTime time.Time `json:"date_and_time"`
+	UserID      uuid.UUID `json:"user_id"`
+}
+
+type EventListResponse struct {
+	EventList []*CreateEventResponse `json:"event_list"`
 }

@@ -15,12 +15,14 @@ import (
 type HTTPEventServer struct {
 	ctx         context.Context
 	application app.Application
+	logger      *zap.Logger
 	server      http.Server
 }
 
-func NewServer(app app.Application, config *configs.Config) *HTTPEventServer {
+func NewServer(app app.Application, config *configs.Config, logger *zap.Logger) *HTTPEventServer {
 	return &HTTPEventServer{
 		application: app,
+		logger:      logger,
 		server: http.Server{
 			Addr:              net.JoinHostPort(config.Host, config.Port),
 			ReadHeaderTimeout: 3 * time.Second,
