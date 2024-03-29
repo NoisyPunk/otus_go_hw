@@ -16,7 +16,7 @@ const (
 	month = "month"
 )
 
-func (e GRPCEventServer) CreateEvent(ctx context.Context,
+func (e *GRPCEventServer) CreateEvent(ctx context.Context,
 	request *pb.CreateEventRequest,
 ) (*pb.EventResponse, error) {
 	userID, err := uuid.Parse(request.UserId)
@@ -48,7 +48,7 @@ func (e GRPCEventServer) CreateEvent(ctx context.Context,
 	return response, nil
 }
 
-func (e GRPCEventServer) UpdateEvent(ctx context.Context,
+func (e *GRPCEventServer) UpdateEvent(ctx context.Context,
 	request *pb.EventUpdateRequest,
 ) (*pb.EventUpdateResponse, error) {
 	eventID, err := uuid.Parse(request.EventId)
@@ -81,7 +81,7 @@ func (e GRPCEventServer) UpdateEvent(ctx context.Context,
 	return response, nil
 }
 
-func (e GRPCEventServer) DeleteEvent(ctx context.Context,
+func (e *GRPCEventServer) DeleteEvent(ctx context.Context,
 	request *pb.EventDeletionRequest,
 ) (*pb.EventDeletionResponse, error) {
 	eventID, err := uuid.Parse(request.EventId)
@@ -101,25 +101,25 @@ func (e GRPCEventServer) DeleteEvent(ctx context.Context,
 	return response, nil
 }
 
-func (e GRPCEventServer) DailyEventList(ctx context.Context,
+func (e *GRPCEventServer) DailyEventList(ctx context.Context,
 	request *pb.IntervalListRequest,
 ) (*pb.EventList, error) {
 	return e.collectEventList(ctx, request, day)
 }
 
-func (e GRPCEventServer) WeeklyEventList(ctx context.Context,
+func (e *GRPCEventServer) WeeklyEventList(ctx context.Context,
 	request *pb.IntervalListRequest,
 ) (*pb.EventList, error) {
 	return e.collectEventList(ctx, request, week)
 }
 
-func (e GRPCEventServer) MonthlyEventList(ctx context.Context,
+func (e *GRPCEventServer) MonthlyEventList(ctx context.Context,
 	request *pb.IntervalListRequest,
 ) (*pb.EventList, error) {
 	return e.collectEventList(ctx, request, month)
 }
 
-func (e GRPCEventServer) collectEventList(ctx context.Context,
+func (e *GRPCEventServer) collectEventList(ctx context.Context,
 	request *pb.IntervalListRequest, period string,
 ) (*pb.EventList, error) {
 	userID, err := uuid.Parse(request.UserId)

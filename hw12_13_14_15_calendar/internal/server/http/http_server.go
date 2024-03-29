@@ -13,13 +13,15 @@ import (
 )
 
 type HTTPEventServer struct {
+	ctx         context.Context
 	application app.Application
 	logger      *zap.Logger
 	server      http.Server
 }
 
-func NewServer(app app.Application, config *configs.Config, logger *zap.Logger) *HTTPEventServer {
+func NewServer(ctx context.Context, app app.Application, config *configs.Config, logger *zap.Logger) *HTTPEventServer {
 	return &HTTPEventServer{
+		ctx:         ctx,
 		application: app,
 		logger:      logger,
 		server: http.Server{
@@ -29,8 +31,8 @@ func NewServer(app app.Application, config *configs.Config, logger *zap.Logger) 
 	}
 }
 
-func (s *HTTPEventServer) Start(ctx context.Context) error {
-	l := logger.FromContext(ctx)
+func (s *HTTPEventServer) Start() error {
+	l := logger.FromContext(s.ctx)
 
 	mux := http.NewServeMux()
 	mux.Handle("/create", loggingMiddleware(http.HandlerFunc(s.CreateEvent), l))
@@ -50,10 +52,10 @@ func (s *HTTPEventServer) Start(ctx context.Context) error {
 		return nil
 	}()
 	l.Debug("http server started", zap.String("server address", s.server.Addr))
-	<-ctx.Done()
+	<-s.ctx.Done()
 	return nil
 }
 
-func (s *HTTPEventServer) Stop(ctx context.Context) error {
-	return s.server.Shutdown(ctx)
+func (s *HTTPEventServer) Stop() error {
+	return s.server.Shutdown(s.ctx)
 }

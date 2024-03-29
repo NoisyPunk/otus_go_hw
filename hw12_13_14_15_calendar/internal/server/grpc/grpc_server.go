@@ -12,14 +12,17 @@ import (
 )
 
 type GRPCEventServer struct {
+	ctx         context.Context
 	application app.Application
 	server      *grpc.Server
 	port        string
 	pb.UnimplementedEventsServer
 }
 
-func (e GRPCEventServer) Start(ctx context.Context) error {
-	l := logger.FromContext(ctx)
+func (e *GRPCEventServer) Start() error {
+	l := logger.FromContext(e.ctx)
+
+	e.server = grpc.NewServer(grpc.UnaryInterceptor(e.loggingInterceptor))
 
 	listener, err := net.Listen("tcp", e.port)
 	if err != nil {
@@ -35,18 +38,18 @@ func (e GRPCEventServer) Start(ctx context.Context) error {
 		return nil
 	}()
 	l.Debug("grpc server started", zap.String("server port", e.port))
-	<-ctx.Done()
+	<-e.ctx.Done()
 	return nil
 }
 
-func (e GRPCEventServer) Stop() {
+func (e *GRPCEventServer) Stop() {
 	e.server.GracefulStop()
 }
 
-func NewGRPCServer(app app.Application, port string) *GRPCEventServer {
+func NewGRPCServer(ctx context.Context, app app.Application, port string) *GRPCEventServer {
 	return &GRPCEventServer{
+		ctx:                       ctx,
 		application:               app,
-		server:                    grpc.NewServer(),
 		port:                      port,
 		UnimplementedEventsServer: pb.UnimplementedEventsServer{},
 	}

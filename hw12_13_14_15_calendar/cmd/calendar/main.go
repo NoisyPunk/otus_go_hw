@@ -4,18 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"os"
-	"os/signal"
-	"sync"
-	"syscall"
-	"time"
-
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	internalgrpc "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
 	"go.uber.org/zap"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 )
 
 var configFile string
@@ -47,8 +45,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	server := internalhttp.NewServer(calendar, config, log)
-	grpcServer := internalgrpc.NewGRPCServer(calendar, config.EventServerPort)
+	server := internalhttp.NewServer(ctx, calendar, config, log)
+	grpcServer := internalgrpc.NewGRPCServer(ctx, calendar, config.EventServerPort)
 
 	wg := sync.WaitGroup{}
 
@@ -56,10 +54,7 @@ func main() {
 	go func() {
 		<-ctx.Done()
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
-		defer cancel()
-
-		if err := server.Stop(ctx); err != nil {
+		if err := server.Stop(); err != nil {
 			log.Error("failed to stop http server: " + err.Error())
 		}
 		grpcServer.Stop()
@@ -67,7 +62,7 @@ func main() {
 	}()
 
 	go func() {
-		if err = server.Start(ctx); err != nil {
+		if err = server.Start(); err != nil {
 			log.Error("failed to start http server", zap.String("error", err.Error()))
 			cancel()
 			os.Exit(1)
@@ -75,7 +70,7 @@ func main() {
 	}()
 
 	go func() {
-		if err = grpcServer.Start(ctx); err != nil {
+		if err = grpcServer.Start(); err != nil {
 			log.Error("failed to start grpc server", zap.String("error", err.Error()))
 			cancel()
 			os.Exit(1)

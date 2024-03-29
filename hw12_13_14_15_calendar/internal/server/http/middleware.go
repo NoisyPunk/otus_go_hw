@@ -29,7 +29,7 @@ func loggingMiddleware(next http.Handler, l *zap.Logger) http.Handler {
 		next.ServeHTTP(rw, r)
 
 		l.Info(
-			"request stats",
+			"http request stats",
 			zap.Duration("latency", time.Since(start)),
 			zap.String("client_addr", r.RemoteAddr),
 			zap.String("date_time", dateTime),
