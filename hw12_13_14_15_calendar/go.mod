@@ -3,6 +3,7 @@ module github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar
 go 1.19
 
 require (
+	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.3.5

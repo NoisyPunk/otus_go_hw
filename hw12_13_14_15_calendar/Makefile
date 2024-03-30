@@ -23,6 +23,7 @@ version: build
 	$(BIN) version
 
 generate:
+	go generate ./internal/app
 	rm -rf api/grpc/pb
 	mkdir -p api/grpc/pb
 

@@ -1,5 +1,7 @@
 package app
 
+//go:generate mockgen -destination=./../../mocks/app_mock.go -source=app.go -package=appmock Application
+
 import (
 	"context"
 	"sync"
