@@ -3,17 +3,18 @@ package internalhttp
 import (
 	"bytes"
 	"context"
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	appmock "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"io"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 func TestCreateEventHandler(t *testing.T) {
@@ -76,6 +77,7 @@ func TestCreateEventHandler(t *testing.T) {
 			w := httptest.NewRecorder()
 			server.CreateEvent(w, r)
 			result := w.Result()
+			defer result.Body.Close()
 			require.Equal(t, c.responseCode, result.StatusCode)
 		})
 	}
@@ -132,6 +134,7 @@ func TestCreateUpdateHandler(t *testing.T) {
 			w := httptest.NewRecorder()
 			server.UpdateEvent(w, r)
 			result := w.Result()
+			defer result.Body.Close()
 			require.Equal(t, c.responseCode, result.StatusCode)
 		})
 	}

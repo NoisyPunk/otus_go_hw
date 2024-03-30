@@ -10,7 +10,8 @@ import (
 )
 
 func (e *GRPCEventServer) loggingInterceptor(ctx context.Context, request interface{},
-	serverInfo *grpc.UnaryServerInfo, grpcHandler grpc.UnaryHandler) (interface{}, error) {
+	serverInfo *grpc.UnaryServerInfo, grpcHandler grpc.UnaryHandler,
+) (interface{}, error) {
 	l := logger.FromContext(e.ctx)
 	start := time.Now()
 	dateTime := time.DateTime
