@@ -23,15 +23,7 @@ version: build
 	$(BIN) version
 
 generate:
-	go generate ./internal/app
-	rm -rf api/grpc/pb
-	mkdir -p api/grpc/pb
-
-	protoc \
-		--proto_path=internal/server/grpc/ \
-		--go_out=internal/server/grpc/pb \
-		--go-grpc_out=internal/server/grpc/pb \
-		internal/server/grpc/*.proto
+	go generate ./...
 
 test:
 	docker-compose up -d \
@@ -46,4 +38,4 @@ install-lint-deps:
 lint: install-lint-deps
 	golangci-lint run ./...
 
-.PHONY: build run build-img run-img version test lint
+.PHONY: build run build-img run-img version test lint generate
