@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	appmock "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/mocks"
 	"github.com/golang/mock/gomock"
@@ -18,7 +18,7 @@ import (
 )
 
 func TestCreateEventHandler(t *testing.T) {
-	config := &configs.Config{
+	config := &calendar_config.Config{
 		Host: "127.0.0.1",
 		Port: "8182",
 	}
@@ -84,7 +84,7 @@ func TestCreateEventHandler(t *testing.T) {
 }
 
 func TestCreateUpdateHandler(t *testing.T) {
-	config := &configs.Config{
+	config := &calendar_config.Config{
 		Host: "127.0.0.1",
 		Port: "8182",
 	}

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"go.uber.org/zap"
 )
@@ -19,7 +19,7 @@ type HTTPEventServer struct {
 	server      http.Server
 }
 
-func NewServer(ctx context.Context, app app.Application, config *configs.Config, logger *zap.Logger) *HTTPEventServer {
+func NewServer(ctx context.Context, app app.Application, config *calendar_config.Config, logger *zap.Logger) *HTTPEventServer {
 	return &HTTPEventServer{
 		ctx:         ctx,
 		application: app,

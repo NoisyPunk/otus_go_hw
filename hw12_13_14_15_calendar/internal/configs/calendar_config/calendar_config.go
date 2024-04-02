@@ -1,4 +1,4 @@
-package configs
+package calendar_config
 
 import (
 	"os"
