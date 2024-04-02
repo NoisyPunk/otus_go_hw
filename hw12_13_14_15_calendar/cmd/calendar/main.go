@@ -10,7 +10,7 @@ import (
 	"syscall"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	internalgrpc "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
@@ -20,7 +20,7 @@ import (
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "./configs/config.yaml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./configs/calendar_config.yaml", "Path to configuration file")
 }
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	config, err := configs.GetConfig(configFile)
+	config, err := calendar_config.GetConfig(configFile)
 	if err != nil {
 		fmt.Printf("can't get config from config file: %s", err.Error())
 		cancel()

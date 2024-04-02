@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	memorystorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/memory"
@@ -29,7 +29,7 @@ type Application interface {
 	EventsMonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error)
 }
 
-func New(ctx context.Context, config *configs.Config) (*App, error) {
+func New(ctx context.Context, config *calendar_config.Config) (*App, error) {
 	l := logger.FromContext(ctx)
 	var store storage.Storage
 

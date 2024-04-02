@@ -1,18 +1,14 @@
-package configs
+package scheduler_config
 
 import (
-	"os"
-
 	"gopkg.in/yaml.v3"
+	"os"
 )
 
 type Config struct {
-	Host            string `yaml:"host"`
-	Port            string `yaml:"port"`
-	EventServerPort string `yaml:"eventServerPort"`
-	LogLevel        string `yaml:"logLevel"`
-	InmemStore      bool   `yaml:"inmemStore"`
-	Dsn             string `yaml:"postgresDsn"`
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	LogLevel string `yaml:"logLevel"`
 }
 
 func newConfig() *Config {
