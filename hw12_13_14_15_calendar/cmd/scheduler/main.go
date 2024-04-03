@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/scheduler"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
-	"github.com/streadway/amqp"
 	"os"
 	"os/signal"
 	"syscall"
@@ -34,46 +34,11 @@ func main() {
 	log := logger.New(config.LogLevel)
 	ctx = logger.ContextLogger(ctx, log)
 
-	fmt.Println("Producer app")
-	conn, err := amqp.Dial("amqp://guest:guest@127.0.0.1:5672/")
+	app, err := scheduler.New(ctx, config)
+	_ = app
 	if err != nil {
-		panic(err)
+		fmt.Printf("can't connect to db: %s", err.Error())
+		cancel()
+		os.Exit(1)
 	}
-	defer conn.Close()
-
-	ch, err := conn.Channel()
-	if err != nil {
-		panic(err)
-	}
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(
-		"CalendarQueue",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("queue declared", q)
-
-	err = ch.Publish(
-		"",
-		"CalendarQueue",
-		false,
-		false,
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte("hello world"),
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Message published")
 }

@@ -4,9 +4,9 @@ package internalgrpc
 
 import (
 	"context"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/calendar"
 	"net"
 
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc/pb"
 	"go.uber.org/zap"
@@ -15,7 +15,7 @@ import (
 
 type GRPCEventServer struct {
 	ctx         context.Context
-	application app.Application
+	application calendar.Application
 	server      *grpc.Server
 	port        string
 	pb.UnimplementedEventsServer
@@ -48,7 +48,7 @@ func (e *GRPCEventServer) Stop() {
 	e.server.GracefulStop()
 }
 
-func NewGRPCServer(ctx context.Context, app app.Application, port string) *GRPCEventServer {
+func NewGRPCServer(ctx context.Context, app calendar.Application, port string) *GRPCEventServer {
 	return &GRPCEventServer{
 		ctx:                       ctx,
 		application:               app,

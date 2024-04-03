@@ -2,11 +2,11 @@ package internalhttp
 
 import (
 	"context"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/calendar"
 	"net"
 	"net/http"
 	"time"
 
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"go.uber.org/zap"
@@ -14,12 +14,12 @@ import (
 
 type HTTPEventServer struct {
 	ctx         context.Context
-	application app.Application
+	application calendar.Application
 	logger      *zap.Logger
 	server      http.Server
 }
 
-func NewServer(ctx context.Context, app app.Application, config *calendar_config.Config, logger *zap.Logger) *HTTPEventServer {
+func NewServer(ctx context.Context, app calendar.Application, config *calendar_config.Config, logger *zap.Logger) *HTTPEventServer {
 	return &HTTPEventServer{
 		ctx:         ctx,
 		application: app,

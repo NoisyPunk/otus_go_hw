@@ -1,4 +1,4 @@
-package app
+package calendar
 
 //go:generate mockgen -destination=./../../mocks/app_mock.go -source=app.go -package=appmock Application
 

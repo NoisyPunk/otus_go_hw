@@ -6,9 +6,13 @@ import (
 )
 
 type Config struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	LogLevel string `yaml:"logLevel"`
+	Host      string `yaml:"host"`
+	Port      string `yaml:"port"`
+	User      string `yaml:"user"`
+	Password  string `yaml:"password"`
+	LogLevel  string `yaml:"logLevel"`
+	Dsn       string `yaml:"postgresDsn"`
+	Frequency int    `yaml:"frequency"`
 }
 
 func newConfig() *Config {

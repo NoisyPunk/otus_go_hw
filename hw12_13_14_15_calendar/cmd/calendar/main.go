@@ -4,12 +4,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/calendar"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	internalgrpc "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc"
@@ -39,15 +39,15 @@ func main() {
 	log := logger.New(config.LogLevel)
 	ctx = logger.ContextLogger(ctx, log)
 
-	calendar, err := app.New(ctx, config)
+	app, err := calendar.New(ctx, config)
 	if err != nil {
 		fmt.Printf("can't connect to db: %s", err.Error())
 		cancel()
 		os.Exit(1)
 	}
 
-	server := internalhttp.NewServer(ctx, calendar, config, log)
-	grpcServer := internalgrpc.NewGRPCServer(ctx, calendar, config.EventServerPort)
+	server := internalhttp.NewServer(ctx, app, config, log)
+	grpcServer := internalgrpc.NewGRPCServer(ctx, app, config.EventServerPort)
 
 	wg := sync.WaitGroup{}
 
