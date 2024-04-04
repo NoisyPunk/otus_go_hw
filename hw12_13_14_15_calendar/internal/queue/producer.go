@@ -2,8 +2,9 @@ package queue
 
 import (
 	"context"
-	"fmt"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
+	"github.com/pkg/errors"
 	"github.com/streadway/amqp"
 	"net"
 )
@@ -15,21 +16,23 @@ type Producer struct {
 }
 
 func NewProducer(ctx context.Context, config *scheduler_config.Config) (*Producer, error) {
-	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
-	conn, err := amqp.Dial(url)
-	//conn, err := amqp.Dial("amqp://guest:guest@127.0.0.1:5672/")
+	l := logger.FromContext(ctx)
+	url := "amqp://" + config.User + ":" + config.Password + "" + net.JoinHostPort(config.Host, config.Port)
+	connect, err := amqp.Dial(url)
 	if err != nil {
-		panic(err)
+		l.Error("producer connection to rmq failed")
+		return nil, errors.Wrap(err, "producer connection to rmq failed")
 	}
-	defer conn.Close()
+	defer connect.Close()
 
-	ch, err := conn.Channel()
+	channel, err := connect.Channel()
 	if err != nil {
-		panic(err)
+		l.Error("producer channel creation failed")
+		return nil, errors.Wrap(err, "producer channel creation failed")
 	}
-	defer ch.Close()
+	defer channel.Close()
 
-	q, err := ch.QueueDeclare(
+	queue, err := channel.QueueDeclare(
 		"CalendarQueue",
 		false,
 		false,
@@ -38,25 +41,14 @@ func NewProducer(ctx context.Context, config *scheduler_config.Config) (*Produce
 		nil,
 	)
 	if err != nil {
-		panic(err)
+		l.Error("producer queue creation failed")
+		return nil, errors.Wrap(err, "producer queue creation failed")
+	}
+	producer := Producer{
+		rmqConnection: connect,
+		rmqChannel:    channel,
+		rmqQueue:      &queue,
 	}
 
-	fmt.Println("queue declared", q)
-
-	err = ch.Publish(
-		"",
-		"CalendarQueue",
-		false,
-		false,
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte("hello world"),
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Message published")
-	return nil, nil
+	return &producer, nil
 }
