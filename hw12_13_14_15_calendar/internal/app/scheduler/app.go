@@ -5,6 +5,7 @@ import (
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/queue"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
+	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/pkg/errors"
 )
 
@@ -19,10 +20,16 @@ func New(ctx context.Context, config *scheduler_config.Config) (*App, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating producer")
 	}
+	store := sqlstorage.New()
+	err = store.Connect(ctx, config.Dsn)
+	if err != nil {
+		return nil, errors.Wrap(err, "error with connecting to storage by producer")
+
+	}
 	app := App{
-		storage:  nil,
+		storage:  store,
 		producer: producer,
-		frequent: 0,
+		frequent: config.Frequency,
 	}
 	return &app, nil
 }

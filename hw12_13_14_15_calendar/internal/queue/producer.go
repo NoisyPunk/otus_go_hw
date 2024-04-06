@@ -17,7 +17,7 @@ type Producer struct {
 
 func NewProducer(ctx context.Context, config *scheduler_config.Config) (*Producer, error) {
 	l := logger.FromContext(ctx)
-	url := "amqp://" + config.User + ":" + config.Password + "" + net.JoinHostPort(config.Host, config.Port)
+	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
 	connect, err := amqp.Dial(url)
 	if err != nil {
 		l.Error("producer connection to rmq failed")
