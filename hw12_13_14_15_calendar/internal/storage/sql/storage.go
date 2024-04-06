@@ -136,3 +136,36 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	l.Info("monthly list generated:", zap.String("user_id", userID.String()))
 	return events, nil
 }
+
+func (s *Storage) OldEventsList(ctx context.Context, storagePeriod time.Duration) ([]storage.Event, error) {
+	l := logger.FromContext(ctx)
+	var events []storage.Event
+
+	period := time.Now().Add(-storagePeriod * (24 * time.Hour))
+
+	query := `SELECT id FROM events where date_and_time < $1`
+
+	err := s.db.Select(&events, query, period)
+	if err != nil {
+		return nil, err
+	}
+	l.Info("old events list generated")
+	return events, nil
+
+}
+
+func (s *Storage) NotifyList(ctx context.Context) ([]storage.Event, error) {
+	l := logger.FromContext(ctx)
+	var events []storage.Event
+
+	query := `SELECT id, title, date_and_time, user_id, time_to_notify
+			FROM events where  date_and_time > now() + make_interval(hours := 3) 
+              and now() + make_interval(hours := 3) + make_interval(mins := time_to_notify) > date_and_time`
+
+	err := s.db.Select(&events, query)
+	if err != nil {
+		return nil, err
+	}
+	l.Info("notify events list generated")
+	return events, nil
+}

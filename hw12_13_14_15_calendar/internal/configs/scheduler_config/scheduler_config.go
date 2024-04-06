@@ -6,13 +6,15 @@ import (
 )
 
 type Config struct {
-	Host      string `yaml:"host"`
-	Port      string `yaml:"port"`
-	User      string `yaml:"user"`
-	Password  string `yaml:"password"`
-	LogLevel  string `yaml:"logLevel"`
-	Dsn       string `yaml:"postgresDsn"`
-	Frequency int    `yaml:"frequency"`
+	Host                   string `yaml:"host"`
+	Port                   string `yaml:"port"`
+	User                   string `yaml:"user"`
+	Password               string `yaml:"password"`
+	LogLevel               string `yaml:"logLevel"`
+	Dsn                    string `yaml:"postgresDsn"`
+	RemoveScannerFrequency int    `yaml:"removeScannerFrequency"`
+	NotifyScannerFrequency int    `yaml:"notifyScannerFrequency"`
+	StoragePeriod          int    `yaml:"storagePeriod"`
 }
 
 func newConfig() *Config {

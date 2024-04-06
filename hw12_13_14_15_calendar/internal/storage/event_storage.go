@@ -26,4 +26,6 @@ type Storage interface {
 	DailyList(ctx context.Context, date time.Time, userID uuid.UUID) ([]Event, error)
 	WeeklyList(ctx context.Context, startWeekDate time.Time, userID uuid.UUID) ([]Event, error)
 	MonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]Event, error)
+	OldEventsList(ctx context.Context, limit time.Duration) ([]Event, error)
+	NotifyList(ctx context.Context) ([]Event, error)
 }

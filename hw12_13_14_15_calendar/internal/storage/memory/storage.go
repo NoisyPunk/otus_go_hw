@@ -122,3 +122,11 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	l.Info("monthly list formed", zap.String("user_id:", userID.String()))
 	return events, nil
 }
+
+func (s *Storage) OldEventsList(_ context.Context, _ time.Duration) ([]storage.Event, error) {
+	return nil, nil
+}
+
+func (s *Storage) NotifyList(_ context.Context) ([]storage.Event, error) {
+	return nil, nil
+}

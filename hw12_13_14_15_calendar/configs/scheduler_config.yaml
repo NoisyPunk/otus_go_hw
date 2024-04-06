@@ -10,5 +10,8 @@ logLevel: "debug"
 # storage
 postgresDsn: "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable"
 
-# execution frequency (mins)
-frequency: 1
+# years
+storagePeriod: 1
+# mins
+removeScannerFrequency: 60
+notifyScannerFrequency: 1
