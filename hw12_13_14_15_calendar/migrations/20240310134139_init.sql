@@ -4,9 +4,9 @@ CREATE table events (
                        user_id         uuid,
                        title           text,
                        date_and_time   timestamp with time zone,
-                       duration        bigint,
+                       duration        int,
                        description     text,
-                       time_to_notify  bigint
+                       time_to_notify  int
 );
 
 -- +goose Down

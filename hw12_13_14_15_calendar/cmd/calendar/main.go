@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
@@ -76,6 +77,6 @@ func main() {
 		}
 	}()
 
-	log.Info("calendar is running...")
+	log.Info("calendar is running...", zap.String("start_time", time.Now().String()))
 	wg.Wait()
 }

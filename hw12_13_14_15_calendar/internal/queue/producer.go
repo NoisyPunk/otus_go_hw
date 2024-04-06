@@ -10,8 +10,8 @@ import (
 )
 
 type Producer struct {
+	RmqChannel    *amqp.Channel
 	rmqConnection *amqp.Connection
-	rmqChannel    *amqp.Channel
 	rmqQueue      *amqp.Queue
 }
 
@@ -23,14 +23,12 @@ func NewProducer(ctx context.Context, config *scheduler_config.Config) (*Produce
 		l.Error("producer connection to rmq failed")
 		return nil, errors.Wrap(err, "producer connection to rmq failed")
 	}
-	defer connect.Close()
 
 	channel, err := connect.Channel()
 	if err != nil {
 		l.Error("producer channel creation failed")
 		return nil, errors.Wrap(err, "producer channel creation failed")
 	}
-	defer channel.Close()
 
 	queue, err := channel.QueueDeclare(
 		"CalendarQueue",
@@ -45,8 +43,8 @@ func NewProducer(ctx context.Context, config *scheduler_config.Config) (*Produce
 		return nil, errors.Wrap(err, "producer queue creation failed")
 	}
 	producer := Producer{
+		RmqChannel:    channel,
 		rmqConnection: connect,
-		rmqChannel:    channel,
 		rmqQueue:      &queue,
 	}
 
