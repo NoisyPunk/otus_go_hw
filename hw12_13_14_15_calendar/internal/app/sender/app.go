@@ -3,7 +3,8 @@ package sender
 import (
 	"context"
 	"encoding/json"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
+
+	senderconfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/queue"
 	"github.com/pkg/errors"
@@ -14,7 +15,7 @@ type App struct {
 	consumer *queue.Consumer
 }
 
-func New(ctx context.Context, config *sender_config.Config) (*App, error) {
+func New(ctx context.Context, config *senderconfig.Config) (*App, error) {
 	consumer, err := queue.NewConsumer(ctx, config)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating consumer")
@@ -49,8 +50,8 @@ func (a *App) Consume(ctx context.Context) {
 			if err != nil {
 				l.Error("can't unmarshal message", zap.String("error_message", err.Error()))
 			}
-			l.Info("recieved message:", zap.String("event_id", msg.EventId.String()), zap.String("event_title", msg.Title),
-				zap.String("date_and_time", msg.DateAndTime.String()), zap.String("user_id", msg.UserId.String()))
+			l.Info("received message:", zap.String("event_id", msg.EventID.String()), zap.String("event_title", msg.Title),
+				zap.String("date_and_time", msg.DateAndTime.String()), zap.String("user_id", msg.UserID.String()))
 		}
 	}()
 

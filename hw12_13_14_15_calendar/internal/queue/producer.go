@@ -2,11 +2,12 @@ package queue
 
 import (
 	"context"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
+	"net"
+
+	schedulerConfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/pkg/errors"
 	"github.com/streadway/amqp"
-	"net"
 )
 
 type Producer struct {
@@ -15,7 +16,7 @@ type Producer struct {
 	rmqQueue      *amqp.Queue
 }
 
-func NewProducer(ctx context.Context, config *scheduler_config.Config) (*Producer, error) {
+func NewProducer(ctx context.Context, config *schedulerConfig.Config) (*Producer, error) {
 	l := logger.FromContext(ctx)
 	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
 	connect, err := amqp.Dial(url)

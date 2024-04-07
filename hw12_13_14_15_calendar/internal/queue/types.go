@@ -1,13 +1,14 @@
 package queue
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type RmqMessage struct {
-	EventId     uuid.UUID `json:"eventId"`
+	EventID     uuid.UUID `json:"eventId"`
 	Title       string    `json:"title"`
 	DateAndTime time.Time `json:"dateAndTime"`
-	UserId      uuid.UUID `json:"userId"`
+	UserID      uuid.UUID `json:"userId"`
 }

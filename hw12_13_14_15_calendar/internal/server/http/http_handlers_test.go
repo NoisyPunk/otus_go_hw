@@ -18,7 +18,7 @@ import (
 )
 
 func TestCreateEventHandler(t *testing.T) {
-	config := &calendar_config.Config{
+	config := &calendarconfig.Config{
 		Host: "127.0.0.1",
 		Port: "8182",
 	}
@@ -84,7 +84,7 @@ func TestCreateEventHandler(t *testing.T) {
 }
 
 func TestCreateUpdateHandler(t *testing.T) {
-	config := &calendar_config.Config{
+	config := &calendarconfig.Config{
 		Host: "127.0.0.1",
 		Port: "8182",
 	}

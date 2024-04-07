@@ -4,15 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/sender"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
-	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/sender"
+	senderconfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
+	"go.uber.org/zap"
 )
 
 var configFile string
@@ -27,7 +28,7 @@ func main() {
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	config, err := sender_config.GetConfig(configFile)
+	config, err := senderconfig.GetConfig(configFile)
 	if err != nil {
 		fmt.Printf("can't get config from config file: %s", err.Error())
 		os.Exit(1) //nolint:gocritic
