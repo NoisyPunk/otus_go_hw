@@ -8,7 +8,6 @@ import (
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -24,11 +23,11 @@ func New() *Storage {
 }
 
 func (s *Storage) Connect(_ context.Context, _ string) (err error) {
-	return errors.New("not implemented for memory storage")
+	return nil
 }
 
 func (s *Storage) Close() error {
-	return errors.New("not implemented for memory storage")
+	return nil
 }
 
 func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UUID) (storage.Event, error) {

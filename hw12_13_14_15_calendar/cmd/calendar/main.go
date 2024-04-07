@@ -32,7 +32,6 @@ func main() {
 	config, err := configs.GetConfig(configFile)
 	if err != nil {
 		fmt.Printf("can't get config from config file: %s", err.Error())
-		cancel()
 		os.Exit(1) //nolint:gocritic
 	}
 
@@ -65,16 +64,16 @@ func main() {
 	go func() {
 		if err = server.Start(); err != nil {
 			log.Error("failed to start http server", zap.String("error", err.Error()))
-			cancel()
-			os.Exit(1)
+			if err := server.Stop(); err != nil {
+				log.Error("failed to stop http server: " + err.Error())
+			}
 		}
 	}()
 
 	go func() {
 		if err = grpcServer.Start(); err != nil {
 			log.Error("failed to start grpc server", zap.String("error", err.Error()))
-			cancel()
-			os.Exit(1)
+			grpcServer.Stop()
 		}
 	}()
 

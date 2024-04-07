@@ -4,7 +4,6 @@ package app
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
@@ -17,7 +16,6 @@ import (
 
 type App struct {
 	Storage storage.Storage
-	mu      sync.RWMutex
 }
 
 type Application interface {
@@ -48,7 +46,6 @@ func New(ctx context.Context, config *configs.Config) (*App, error) {
 
 	return &App{
 		Storage: store,
-		mu:      sync.RWMutex{},
 	}, nil
 }
 
