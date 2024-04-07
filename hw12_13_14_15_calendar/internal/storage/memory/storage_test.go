@@ -25,10 +25,10 @@ func TestStorage(t *testing.T) {
 		event := storage.Event{
 			Title:        "Test Title",
 			DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-			Duration:     15 * time.Minute,
+			Duration:     15,
 			Description:  "Test Decription",
 			UserID:       userID,
-			TimeToNotify: 10 * time.Minute,
+			TimeToNotify: 10,
 		}
 
 		id, err := memStorage.Create(ctx, event, userID)
@@ -51,28 +51,28 @@ func TestStorage(t *testing.T) {
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Decription",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title2",
 				DateAndTime:  time.Date(2024, 11, 5, 22, 24, 23, 0, time.UTC),
-				Duration:     10 * time.Minute,
+				Duration:     10,
 				Description:  "Test Decription2",
 				UserID:       userID,
-				TimeToNotify: 14 * time.Minute,
+				TimeToNotify: 14,
 			},
 		}
 
 		notExpectedEvent := storage.Event{
 			Title:        "Test Title3",
 			DateAndTime:  time.Date(2024, 11, 8, 22, 24, 23, 0, time.UTC),
-			Duration:     10 * time.Minute,
+			Duration:     10,
 			Description:  "Test Decription3",
 			UserID:       userID,
-			TimeToNotify: 14 * time.Minute,
+			TimeToNotify: 14,
 		}
 
 		for _, event := range expectedEvents {

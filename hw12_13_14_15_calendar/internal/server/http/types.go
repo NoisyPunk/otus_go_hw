@@ -7,23 +7,23 @@ import (
 )
 
 type CreateEventRequest struct {
-	Title        string        `json:"title"`
-	DateAndTime  time.Time     `json:"dateAndTime"`
-	Duration     time.Duration `json:"duration"`
-	Description  string        `json:"description"`
-	UserID       uuid.UUID     `json:"userId"`
-	TimeToNotify time.Duration `json:"timeToNotify"`
+	Title        string    `json:"title"`
+	DateAndTime  time.Time `json:"dateAndTime"`
+	Duration     int       `json:"duration"`
+	Description  string    `json:"description"`
+	UserID       uuid.UUID `json:"userId"`
+	TimeToNotify int       `json:"timeToNotify"`
 }
 
 type CreateEventResponse struct {
-	Message      string        `json:"message"`
-	ID           uuid.UUID     `json:"id"`
-	Title        string        `json:"title"`
-	DateAndTime  time.Time     `json:"dateAndTime"`
-	Duration     time.Duration `json:"duration"`
-	Description  string        `json:"description"`
-	UserID       uuid.UUID     `json:"userId"`
-	TimeToNotify time.Duration `json:"timeToNotify"`
+	Message      string    `json:"message"`
+	ID           uuid.UUID `json:"id"`
+	Title        string    `json:"title"`
+	DateAndTime  time.Time `json:"dateAndTime"`
+	Duration     int       `json:"duration"`
+	Description  string    `json:"description"`
+	UserID       uuid.UUID `json:"userId"`
+	TimeToNotify int       `json:"timeToNotify"`
 }
 
 type UpdateEventRequest struct {
