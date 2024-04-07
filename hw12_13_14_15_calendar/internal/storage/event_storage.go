@@ -8,13 +8,13 @@ import (
 )
 
 type Event struct {
-	ID           uuid.UUID     `db:"id"`
-	Title        string        `db:"title"`
-	DateAndTime  time.Time     `db:"date_and_time"`
-	Duration     time.Duration `db:"duration"`
-	Description  string        `db:"description"`
-	UserID       uuid.UUID     `db:"user_id"`
-	TimeToNotify time.Duration `db:"time_to_notify"`
+	ID           uuid.UUID `db:"id"`
+	Title        string    `db:"title"`
+	DateAndTime  time.Time `db:"date_and_time"`
+	Duration     int       `db:"duration"`
+	Description  string    `db:"description"`
+	UserID       uuid.UUID `db:"user_id"`
+	TimeToNotify int       `db:"time_to_notify"`
 }
 
 type Storage interface {
