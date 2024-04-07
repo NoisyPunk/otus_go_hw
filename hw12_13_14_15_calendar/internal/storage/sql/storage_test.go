@@ -28,10 +28,10 @@ func TestEvent(t *testing.T) {
 		expectedEvent := storage.Event{
 			Title:        "Test Title",
 			DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-			Duration:     15 * time.Minute,
+			Duration:     15,
 			Description:  "Test Description",
 			UserID:       userID,
-			TimeToNotify: 10 * time.Minute,
+			TimeToNotify: 10,
 		}
 
 		id, err := DBstorage.Create(ctx, expectedEvent, userID)
@@ -52,10 +52,10 @@ func TestEvent(t *testing.T) {
 		expectedEvent := storage.Event{
 			Title:        "Test Title",
 			DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-			Duration:     15 * time.Minute,
+			Duration:     15,
 			Description:  "Test Description",
 			UserID:       userID,
-			TimeToNotify: 10 * time.Minute,
+			TimeToNotify: 10,
 		}
 
 		id, err := DBstorage.Create(ctx, expectedEvent, userID)
@@ -66,10 +66,10 @@ func TestEvent(t *testing.T) {
 			ID:           id.ID,
 			Title:        "Test Title Updated",
 			DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-			Duration:     15 * time.Minute,
+			Duration:     15,
 			Description:  "Test Description Updated",
 			UserID:       userID,
-			TimeToNotify: 10 * time.Minute,
+			TimeToNotify: 10,
 		}
 
 		err = DBstorage.Update(ctx, id.ID, event)
@@ -87,10 +87,10 @@ func TestEvent(t *testing.T) {
 		expectedEvent := storage.Event{
 			Title:        "Test Title",
 			DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-			Duration:     15 * time.Minute,
+			Duration:     15,
 			Description:  "Test Description",
 			UserID:       userID,
-			TimeToNotify: 10 * time.Minute,
+			TimeToNotify: 10,
 		}
 
 		id, err := DBstorage.Create(ctx, expectedEvent, userID)
@@ -127,34 +127,34 @@ func TestEventLists(t *testing.T) {
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 6, 23, 25, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 5, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 4, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 		}
 
@@ -175,34 +175,34 @@ func TestEventLists(t *testing.T) {
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 6, 23, 25, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 12, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 14, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 			{
 				Title:        "Test Title",
 				DateAndTime:  time.Date(2024, 11, 15, 23, 24, 23, 0, time.UTC),
-				Duration:     15 * time.Minute,
+				Duration:     15,
 				Description:  "Test Description",
 				UserID:       userID,
-				TimeToNotify: 10 * time.Minute,
+				TimeToNotify: 10,
 			},
 		}
 

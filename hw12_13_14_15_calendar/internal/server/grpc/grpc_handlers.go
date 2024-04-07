@@ -6,7 +6,6 @@ import (
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc/pb"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	"github.com/google/uuid"
-	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -26,10 +25,10 @@ func (e *GRPCEventServer) CreateEvent(ctx context.Context,
 	eventData := storage.Event{
 		Title:        request.Title,
 		DateAndTime:  request.DateAndTime.AsTime(),
-		Duration:     request.Duration.AsDuration(),
+		Duration:     int(request.Duration),
 		Description:  request.Description,
 		UserID:       userID,
-		TimeToNotify: request.TimeToNotify.AsDuration(),
+		TimeToNotify: int(request.TimeToNotify),
 	}
 	event, err := e.application.CreateEvent(ctx, eventData, userID)
 	if err != nil {
@@ -40,10 +39,10 @@ func (e *GRPCEventServer) CreateEvent(ctx context.Context,
 		EventId:      event.ID.String(),
 		Title:        event.Title,
 		DateAndTime:  timestamppb.New(event.DateAndTime),
-		Duration:     durationpb.New(event.Duration),
+		Duration:     int32(event.Duration),
 		Description:  event.Description,
 		UserId:       event.UserID.String(),
-		TimeToNotify: durationpb.New(event.TimeToNotify),
+		TimeToNotify: int32(event.TimeToNotify),
 	}
 	return response, nil
 }
@@ -63,10 +62,10 @@ func (e *GRPCEventServer) UpdateEvent(ctx context.Context,
 		ID:           eventID,
 		Title:        request.Event.Title,
 		DateAndTime:  request.Event.DateAndTime.AsTime(),
-		Duration:     request.Event.Duration.AsDuration(),
+		Duration:     int(request.Event.Duration),
 		Description:  request.Event.Description,
 		UserID:       userID,
-		TimeToNotify: request.Event.TimeToNotify.AsDuration(),
+		TimeToNotify: int(request.Event.TimeToNotify),
 	}
 
 	err = e.application.UpdateEvent(ctx, eventData.ID, eventData)
@@ -154,10 +153,10 @@ func (e *GRPCEventServer) collectEventList(ctx context.Context,
 			EventId:      event.ID.String(),
 			Title:        event.Title,
 			DateAndTime:  timestamppb.New(event.DateAndTime),
-			Duration:     durationpb.New(event.Duration),
+			Duration:     int32(event.Duration),
 			Description:  event.Description,
 			UserId:       event.UserID.String(),
-			TimeToNotify: durationpb.New(event.TimeToNotify),
+			TimeToNotify: int32(event.TimeToNotify),
 		}
 		eventList = append(eventList, &response)
 	}
