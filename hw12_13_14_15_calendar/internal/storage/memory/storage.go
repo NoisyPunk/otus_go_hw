@@ -123,7 +123,7 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	return events, nil
 }
 
-func (s *Storage) OldEventsList(_ context.Context, _ time.Duration) ([]storage.Event, error) {
+func (s *Storage) OldEventsList(_ context.Context, _ int) ([]storage.Event, error) {
 	return nil, nil
 }
 

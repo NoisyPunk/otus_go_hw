@@ -2,11 +2,12 @@ package queue
 
 import (
 	"context"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
+	"net"
+
+	senderconfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/pkg/errors"
 	"github.com/streadway/amqp"
-	"net"
 )
 
 type Consumer struct {
@@ -14,7 +15,7 @@ type Consumer struct {
 	rmqConnection *amqp.Connection
 }
 
-func NewConsumer(ctx context.Context, config *sender_config.Config) (*Consumer, error) {
+func NewConsumer(ctx context.Context, config *senderconfig.Config) (*Consumer, error) {
 	l := logger.FromContext(ctx)
 	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
 	connect, err := amqp.Dial(url)

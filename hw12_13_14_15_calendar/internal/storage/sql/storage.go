@@ -137,11 +137,11 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	return events, nil
 }
 
-func (s *Storage) OldEventsList(ctx context.Context, storagePeriod time.Duration) ([]storage.Event, error) {
+func (s *Storage) OldEventsList(ctx context.Context, storagePeriod int) ([]storage.Event, error) {
 	l := logger.FromContext(ctx)
 	var events []storage.Event
 
-	period := time.Now().Add(-storagePeriod * (24 * time.Hour))
+	period := time.Now().Add(time.Duration(-storagePeriod) * (24 * time.Hour))
 
 	query := `SELECT id FROM events where date_and_time < $1`
 
@@ -151,7 +151,6 @@ func (s *Storage) OldEventsList(ctx context.Context, storagePeriod time.Duration
 	}
 	l.Info("old events list generated")
 	return events, nil
-
 }
 
 func (s *Storage) NotifyList(ctx context.Context) ([]storage.Event, error) {

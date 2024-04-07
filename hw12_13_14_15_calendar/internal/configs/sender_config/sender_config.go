@@ -1,8 +1,9 @@
-package sender_config
+package senderconfig
 
 import (
-	"gopkg.in/yaml.v3"
 	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {

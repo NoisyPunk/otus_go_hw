@@ -29,7 +29,7 @@ type Application interface {
 	EventsMonthlyList(ctx context.Context, startMonthDate time.Time, userID uuid.UUID) ([]storage.Event, error)
 }
 
-func New(ctx context.Context, config *calendar_config.Config) (*App, error) {
+func New(ctx context.Context, config *calendarconfig.Config) (*App, error) {
 	l := logger.FromContext(ctx)
 	var store storage.Storage
 

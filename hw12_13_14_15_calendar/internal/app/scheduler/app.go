@@ -3,8 +3,9 @@ package scheduler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
+	"time"
+
+	schedulerConfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/queue"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
@@ -12,18 +13,17 @@ import (
 	"github.com/pkg/errors"
 	"github.com/streadway/amqp"
 	"go.uber.org/zap"
-	"time"
 )
 
 type App struct {
 	storage               storage.Storage
 	producer              *queue.Producer
-	removeScannerFrequent time.Duration
-	notifyScannerFrequent time.Duration
-	storePeriod           time.Duration
+	removeScannerFrequent int
+	notifyScannerFrequent int
+	storePeriod           int
 }
 
-func New(ctx context.Context, config *scheduler_config.Config) (*App, error) {
+func New(ctx context.Context, config *schedulerConfig.Config) (*App, error) {
 	producer, err := queue.NewProducer(ctx, config)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating producer")
@@ -32,14 +32,13 @@ func New(ctx context.Context, config *scheduler_config.Config) (*App, error) {
 	err = store.Connect(ctx, config.Dsn)
 	if err != nil {
 		return nil, errors.Wrap(err, "error with connecting to storage by producer")
-
 	}
 	app := App{
 		storage:               store,
 		producer:              producer,
-		removeScannerFrequent: time.Duration(config.RemoveScannerFrequency),
-		notifyScannerFrequent: time.Duration(config.NotifyScannerFrequency),
-		storePeriod:           time.Duration(config.StoragePeriod),
+		removeScannerFrequent: config.RemoveScannerFrequency,
+		notifyScannerFrequent: config.NotifyScannerFrequency,
+		storePeriod:           config.StoragePeriod,
 	}
 	return &app, nil
 }
@@ -47,7 +46,7 @@ func New(ctx context.Context, config *scheduler_config.Config) (*App, error) {
 func (a *App) OldEventRemover(ctx context.Context) {
 	l := logger.FromContext(ctx)
 
-	ticker := time.NewTicker(a.removeScannerFrequent * time.Minute)
+	ticker := time.NewTicker(time.Duration(a.removeScannerFrequent) * time.Minute)
 
 	for {
 		select {
@@ -74,26 +73,27 @@ func (a *App) OldEventRemover(ctx context.Context) {
 func (a *App) Notifier(ctx context.Context) {
 	l := logger.FromContext(ctx)
 
-	ticker := time.NewTicker(a.notifyScannerFrequent * time.Minute)
+	ticker := time.NewTicker(time.Duration(a.notifyScannerFrequent) * time.Minute)
 
 	for {
 		select {
 		case <-ticker.C:
 			events, err := a.storage.NotifyList(ctx)
-
 			if err != nil {
 				l.Error("can't get events list for notify", zap.String("error_message", err.Error()))
 			}
 			for _, event := range events {
 				message := queue.RmqMessage{
-					EventId:     event.ID,
+					EventID:     event.ID,
 					Title:       event.Title,
 					DateAndTime: event.DateAndTime,
-					UserId:      event.UserID,
+					UserID:      event.UserID,
 				}
-				fmt.Println(event)
 
 				j, err := json.Marshal(message)
+				if err != nil {
+					l.Error("can't marshal event for queue", zap.String("error_message", err.Error()))
+				}
 
 				err = a.producer.RmqChannel.Publish(
 					"",
