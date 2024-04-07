@@ -1,45 +1,59 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
-	"github.com/streadway/amqp"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app/sender"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/sender_config"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
+	"go.uber.org/zap"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
+	"time"
 )
 
+var configFile string
+
+func init() {
+	flag.StringVar(&configFile, "config", "./configs/sender_config.yaml", "Path to configuration file")
+}
+
 func main() {
+	flag.Parse()
+	ctx, cancel := signal.NotifyContext(context.Background(),
+		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+	defer cancel()
 
-	fmt.Println("consumer app")
-	conn, err := amqp.Dial("amqp://user:pass@localhost:5672/")
+	config, err := sender_config.GetConfig(configFile)
 	if err != nil {
-		if err != nil {
-			panic(err)
-		}
+		fmt.Printf("can't get config from config file: %s", err.Error())
+		os.Exit(1) //nolint:gocritic
 	}
-	defer conn.Close()
 
-	ch, err := conn.Channel()
+	log := logger.New(config.LogLevel)
+	ctx = logger.ContextLogger(ctx, log)
+
+	app, err := sender.New(ctx, config)
 	if err != nil {
-		panic(err)
+		fmt.Printf("can't connect to db: %s", err.Error())
+		cancel()
+		os.Exit(1)
 	}
-	defer ch.Close()
+	wg := sync.WaitGroup{}
 
-	msgs, err := ch.Consume(
-		"CalendarQueue",
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-
-	frv := make(chan bool)
+	wg.Add(1)
 	go func() {
-		for msg := range msgs {
-			fmt.Println("recieved message: ", msg.Body)
-		}
+		<-ctx.Done()
+		wg.Done()
 	}()
 
-	fmt.Println("connected to rmq")
-	fmt.Println("waotong for mesages")
-	<-frv
+	go func() {
+		app.Consume(ctx)
+	}()
+
+	log.Info("Sender is running...", zap.String("start_time", time.Now().String()))
+	wg.Wait()
 }

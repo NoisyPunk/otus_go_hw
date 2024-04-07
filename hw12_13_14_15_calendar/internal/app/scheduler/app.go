@@ -80,7 +80,6 @@ func (a *App) Notifier(ctx context.Context) {
 		select {
 		case <-ticker.C:
 			events, err := a.storage.NotifyList(ctx)
-			fmt.Println(events)
 
 			if err != nil {
 				l.Error("can't get events list for notify", zap.String("error_message", err.Error()))

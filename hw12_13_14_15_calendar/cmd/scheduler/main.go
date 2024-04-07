@@ -30,7 +30,6 @@ func main() {
 	config, err := scheduler_config.GetConfig(configFile)
 	if err != nil {
 		fmt.Printf("can't get config from config file: %s", err.Error())
-		cancel()
 		os.Exit(1) //nolint:gocritic
 	}
 
