@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 
@@ -40,16 +39,8 @@ func main() {
 	app, err := scheduler.New(ctx, config)
 	if err != nil {
 		fmt.Printf("can't connect to db: %s", err.Error())
-		cancel()
 		os.Exit(1)
 	}
-	wg := sync.WaitGroup{}
-
-	wg.Add(1)
-	go func() {
-		<-ctx.Done()
-		wg.Done()
-	}()
 
 	go func() {
 		app.OldEventRemover(ctx)
@@ -60,5 +51,5 @@ func main() {
 	}()
 
 	log.Info("Scheduler is running...", zap.String("start_time", time.Now().String()))
-	wg.Wait()
+	<-ctx.Done()
 }

@@ -40,7 +40,6 @@ func main() {
 	app, err := sender.New(ctx, config)
 	if err != nil {
 		fmt.Printf("can't connect to db: %s", err.Error())
-		cancel()
 		os.Exit(1)
 	}
 	wg := sync.WaitGroup{}
