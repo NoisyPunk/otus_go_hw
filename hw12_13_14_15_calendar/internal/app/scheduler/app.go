@@ -47,6 +47,7 @@ func (a *App) OldEventRemover(ctx context.Context) {
 	l := logger.FromContext(ctx)
 
 	ticker := time.NewTicker(time.Duration(a.removeScannerFrequent) * time.Minute)
+	defer ticker.Stop()
 
 	for {
 		select {
@@ -64,7 +65,6 @@ func (a *App) OldEventRemover(ctx context.Context) {
 			l.Info("old events deleted successfully")
 
 		case <-ctx.Done():
-			ticker.Stop()
 			return
 		}
 	}
