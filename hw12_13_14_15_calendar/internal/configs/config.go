@@ -8,8 +8,8 @@ import (
 
 type Config struct {
 	Host            string `yaml:"host"`
-	Port            string `yaml:"port"`
-	EventServerPort string `yaml:"eventServerPort"`
+	Port            string `yaml:"httpPort"`
+	EventServerPort string `yaml:"grpcPort"`
 	LogLevel        string `yaml:"logLevel"`
 	InmemStore      bool   `yaml:"inmemStore"`
 	Dsn             string `yaml:"postgresDsn"`

@@ -4,13 +4,12 @@ package internalgrpc
 
 import (
 	"context"
-	"net"
-
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/app"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc/pb"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"net"
 )
 
 type GRPCEventServer struct {
@@ -52,7 +51,7 @@ func NewGRPCServer(ctx context.Context, app app.Application, port string) *GRPCE
 	return &GRPCEventServer{
 		ctx:                       ctx,
 		application:               app,
-		port:                      port,
+		port:                      ":" + port,
 		UnimplementedEventsServer: pb.UnimplementedEventsServer{},
 	}
 }

@@ -40,8 +40,7 @@ func main() {
 
 	calendar, err := app.New(ctx, config)
 	if err != nil {
-		fmt.Printf("can't connect to db: %s", err.Error())
-		cancel()
+		log.Error("failed to connect to db", zap.String("error_message", err.Error()))
 		os.Exit(1)
 	}
 
@@ -63,7 +62,7 @@ func main() {
 
 	go func() {
 		if err = server.Start(); err != nil {
-			log.Error("failed to start http server", zap.String("error", err.Error()))
+			log.Error("failed to start http server", zap.String("error_message", err.Error()))
 			if err := server.Stop(); err != nil {
 				log.Error("failed to stop http server: " + err.Error())
 			}
