@@ -37,7 +37,7 @@ func main() {
 	log := logger.New(config.LogLevel)
 	ctx = logger.ContextLogger(ctx, log)
 
-	app, err := sender.New(ctx, config)
+	app, err := sender.New(log, config)
 	if err != nil {
 		fmt.Printf("can't connect to db: %s", err.Error())
 		os.Exit(1)

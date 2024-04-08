@@ -15,8 +15,8 @@ type App struct {
 	consumer *queue.Consumer
 }
 
-func New(ctx context.Context, config *senderconfig.Config) (*App, error) {
-	consumer, err := queue.NewConsumer(ctx, config)
+func New(log *zap.Logger, config *senderconfig.Config) (*App, error) {
+	consumer, err := queue.NewConsumer(log, config)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating consumer")
 	}

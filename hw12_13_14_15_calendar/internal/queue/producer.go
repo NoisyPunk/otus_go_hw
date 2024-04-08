@@ -1,11 +1,10 @@
 package queue
 
 import (
-	"context"
+	"go.uber.org/zap"
 	"net"
 
 	schedulerConfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/pkg/errors"
 	"github.com/streadway/amqp"
 )
@@ -16,18 +15,17 @@ type Producer struct {
 	rmqQueue      *amqp.Queue
 }
 
-func NewProducer(ctx context.Context, config *schedulerConfig.Config) (*Producer, error) {
-	l := logger.FromContext(ctx)
+func NewProducer(log *zap.Logger, config *schedulerConfig.Config) (*Producer, error) {
 	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
 	connect, err := amqp.Dial(url)
 	if err != nil {
-		l.Error("producer connection to rmq failed")
+		log.Error("producer connection to rmq failed")
 		return nil, errors.Wrap(err, "producer connection to rmq failed")
 	}
 
 	channel, err := connect.Channel()
 	if err != nil {
-		l.Error("producer channel creation failed")
+		log.Error("producer channel creation failed")
 		return nil, errors.Wrap(err, "producer channel creation failed")
 	}
 
@@ -40,7 +38,7 @@ func NewProducer(ctx context.Context, config *schedulerConfig.Config) (*Producer
 		nil,
 	)
 	if err != nil {
-		l.Error("producer queue creation failed")
+		log.Error("producer queue creation failed")
 		return nil, errors.Wrap(err, "producer queue creation failed")
 	}
 	producer := Producer{

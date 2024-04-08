@@ -23,8 +23,8 @@ type App struct {
 	storePeriod           int
 }
 
-func New(ctx context.Context, config *schedulerConfig.Config) (*App, error) {
-	producer, err := queue.NewProducer(ctx, config)
+func New(ctx context.Context, log *zap.Logger, config *schedulerConfig.Config) (*App, error) {
+	producer, err := queue.NewProducer(log, config)
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating producer")
 	}
