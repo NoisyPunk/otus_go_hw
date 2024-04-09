@@ -137,7 +137,7 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	return events, nil
 }
 
-func (s *Storage) OldEventsList(ctx context.Context, storagePeriod int) ([]storage.Event, error) {
+func (s *Storage) DeleteOldEvents(ctx context.Context, storagePeriod int) error {
 	l := logger.FromContext(ctx)
 	var events []storage.Event
 
@@ -147,10 +147,15 @@ func (s *Storage) OldEventsList(ctx context.Context, storagePeriod int) ([]stora
 
 	err := s.db.Select(&events, query, period)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	l.Info("old events list generated")
-	return events, nil
+	for _, event := range events {
+		err = s.Delete(ctx, event.ID)
+		if err != nil {
+			l.Error("can't delete old event", zap.String("error_message", err.Error()))
+		}
+	}
+	return nil
 }
 
 func (s *Storage) NotifyList(ctx context.Context) ([]storage.Event, error) {

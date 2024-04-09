@@ -1,12 +1,12 @@
 package queue
 
 import (
-	"go.uber.org/zap"
 	"net"
 
 	schedulerConfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/scheduler_config"
 	"github.com/pkg/errors"
 	"github.com/streadway/amqp"
+	"go.uber.org/zap"
 )
 
 type Producer struct {

@@ -52,17 +52,12 @@ func (a *App) OldEventRemover(ctx context.Context) {
 	for {
 		select {
 		case <-ticker.C:
-			events, err := a.storage.OldEventsList(ctx, a.storePeriod)
+			err := a.storage.DeleteOldEvents(ctx, a.storePeriod)
 			if err != nil {
-				l.Error("can't get list of old events", zap.String("error_message", err.Error()))
+				l.Error("can't delete old events", zap.String("error_message", err.Error()))
+				continue
 			}
-			for _, event := range events {
-				err = a.storage.Delete(ctx, event.ID)
-				if err != nil {
-					l.Error("can't delete old event", zap.String("error_message", err.Error()))
-				}
-			}
-			l.Info("old events deleted successfully")
+			l.Info("old events deletion job processed")
 
 		case <-ctx.Done():
 			return
@@ -81,6 +76,7 @@ func (a *App) Notifier(ctx context.Context) {
 			events, err := a.storage.NotifyList(ctx)
 			if err != nil {
 				l.Error("can't get events list for notify", zap.String("error_message", err.Error()))
+				continue
 			}
 			for _, event := range events {
 				message := queue.RmqMessage{
@@ -112,7 +108,7 @@ func (a *App) Notifier(ctx context.Context) {
 					)
 				}
 			}
-			l.Info("events published successfully")
+			l.Info("notify job processed")
 
 		case <-ctx.Done():
 			ticker.Stop()

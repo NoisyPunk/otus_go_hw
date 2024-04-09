@@ -122,8 +122,8 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	return events, nil
 }
 
-func (s *Storage) OldEventsList(_ context.Context, _ int) ([]storage.Event, error) {
-	return nil, nil
+func (s *Storage) DeleteOldEvents(_ context.Context, _ int) error {
+	return nil
 }
 
 func (s *Storage) NotifyList(_ context.Context) ([]storage.Event, error) {

@@ -39,7 +39,8 @@ func (a *App) Consume(ctx context.Context) {
 		nil,
 	)
 	if err != nil {
-		l.Error("can't consume channel", zap.String("error_message", err.Error()))
+		l.Error("can't consume channel",
+			zap.String("error_message", err.Error()))
 	}
 
 	var msg queue.RmqMessage
@@ -48,12 +49,24 @@ func (a *App) Consume(ctx context.Context) {
 		for qMsg := range qMsgs {
 			err = json.Unmarshal(qMsg.Body, &msg)
 			if err != nil {
-				l.Error("can't unmarshal message", zap.String("error_message", err.Error()))
+				l.Error("can't unmarshal message",
+					zap.String("error_message", err.Error()))
 			}
-			l.Info("received message:", zap.String("event_id", msg.EventID.String()), zap.String("event_title", msg.Title),
-				zap.String("date_and_time", msg.DateAndTime.String()), zap.String("user_id", msg.UserID.String()))
+			l.Info("received message:",
+				zap.String("event_id", msg.EventID.String()),
+				zap.String("event_title", msg.Title),
+				zap.String("date_and_time", msg.DateAndTime.String()),
+				zap.String("user_id", msg.UserID.String()))
+			select {
+			case <-ctx.Done():
+				l.Debug("sender is turned off",
+					zap.String("last_consumed_message", msg.EventID.String()),
+					zap.String("event_title", msg.Title),
+					zap.String("date_and_time", msg.DateAndTime.String()),
+					zap.String("user_id", msg.UserID.String()))
+			default:
+				continue
+			}
 		}
 	}()
-
-	<-ctx.Done()
 }
