@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -41,15 +42,21 @@ func main() {
 		fmt.Printf("can't connect to db: %s", err.Error())
 		os.Exit(1)
 	}
+	wg := sync.WaitGroup{}
 
+	wg.Add(1)
 	go func() {
 		app.OldEventRemover(ctx)
+		wg.Done()
 	}()
 
+	wg.Add(1)
 	go func() {
 		app.Notifier(ctx)
+		wg.Done()
 	}()
 
 	log.Info("Scheduler is running...", zap.String("start_time", time.Now().String()))
 	<-ctx.Done()
+	wg.Wait()
 }

@@ -1,7 +1,6 @@
 package internalhttp
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,7 +17,7 @@ const (
 )
 
 func (s *HTTPEventServer) CreateEvent(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	buf := s.readRequest(w, r)
 	if buf == nil {
 		return
@@ -67,7 +66,7 @@ func (s *HTTPEventServer) CreateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *HTTPEventServer) UpdateEvent(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	buf := s.readRequest(w, r)
 
 	req := &UpdateEventRequest{}
@@ -108,7 +107,7 @@ func (s *HTTPEventServer) UpdateEvent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *HTTPEventServer) DeleteEvent(w http.ResponseWriter, r *http.Request) {
-	ctx := context.Background()
+	ctx := r.Context()
 	buf := s.readRequest(w, r)
 
 	req := &DeleteEventRequest{}
@@ -152,7 +151,7 @@ func (s *HTTPEventServer) EventsMonthlyList(w http.ResponseWriter, r *http.Reque
 }
 
 func (s *HTTPEventServer) collectEventList(w http.ResponseWriter, r *http.Request, period string) {
-	ctx := context.Background()
+	ctx := r.Context()
 	buf := s.readRequest(w, r)
 
 	req := &EventListRequest{}

@@ -42,18 +42,16 @@ func main() {
 		fmt.Printf("can't connect to db: %s", err.Error())
 		os.Exit(1)
 	}
+
 	wg := sync.WaitGroup{}
 
 	wg.Add(1)
 	go func() {
-		<-ctx.Done()
+		app.Consume(ctx)
 		wg.Done()
 	}()
 
-	go func() {
-		app.Consume(ctx)
-	}()
-
 	log.Info("Sender is running...", zap.String("start_time", time.Now().String()))
+	<-ctx.Done()
 	wg.Wait()
 }
