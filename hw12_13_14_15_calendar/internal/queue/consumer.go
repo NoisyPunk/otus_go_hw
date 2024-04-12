@@ -19,7 +19,7 @@ func NewConsumer(log *zap.Logger, config *senderconfig.Config) (*Consumer, error
 	connect, err := amqp.Dial(url)
 	if err != nil {
 		log.Error("consumer connection to rmq failed")
-		return nil, errors.Wrap(err, "consimer connection to rmq failed")
+		return nil, errors.Wrap(err, "consumer connection to rmq failed")
 	}
 
 	channel, err := connect.Channel()

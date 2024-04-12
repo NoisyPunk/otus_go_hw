@@ -64,6 +64,7 @@ func (a *App) Consume(ctx context.Context) {
 					zap.String("event_title", msg.Title),
 					zap.String("date_and_time", msg.DateAndTime.String()),
 					zap.String("user_id", msg.UserID.String()))
+				return
 			default:
 				continue
 			}

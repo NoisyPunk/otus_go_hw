@@ -39,7 +39,7 @@ func main() {
 
 	app, err := scheduler.New(ctx, log, config)
 	if err != nil {
-		fmt.Printf("can't connect to db: %s", err.Error())
+		fmt.Printf("can't connect to rmq: %s", err.Error())
 		os.Exit(1)
 	}
 	wg := sync.WaitGroup{}

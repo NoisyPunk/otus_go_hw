@@ -19,7 +19,7 @@ import (
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "./configs/sender_config.yaml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./sender_config.yaml", "Path to configuration file")
 }
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 
 	app, err := sender.New(log, config)
 	if err != nil {
-		fmt.Printf("can't connect to db: %s", err.Error())
+		fmt.Printf("can't connect to rmq: %s", err.Error())
 		os.Exit(1)
 	}
 
