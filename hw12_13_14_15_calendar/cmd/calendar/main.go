@@ -21,7 +21,7 @@ import (
 var configFile string
 
 func init() {
-	flag.StringVar(&configFile, "config", "./configs/calendar_config.yaml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./calendar_config.yaml", "Path to configuration file")
 }
 
 func main() {
