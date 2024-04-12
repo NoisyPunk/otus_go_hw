@@ -15,6 +15,7 @@ FROM alpine:3.9 AS runner
 COPY --from=builder /usr/local/src/bin/calendar /
 
 COPY configs/calendar_config.yaml /calendar_config.yaml
+COPY migrations/* /
 
 CMD ["/calendar"]
 

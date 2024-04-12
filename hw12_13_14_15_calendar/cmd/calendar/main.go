@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"os"
 	"os/signal"
 	"sync"
@@ -38,6 +39,12 @@ func main() {
 
 	log := logger.New(config.LogLevel)
 	ctx = logger.ContextLogger(ctx, log)
+
+	err = sqlstorage.Migrate(config)
+	if err != nil {
+		log.Error("migration has failed", zap.String("error_message", err.Error()))
+		os.Exit(1)
+	}
 
 	app, err := calendar.New(ctx, config)
 	if err != nil {

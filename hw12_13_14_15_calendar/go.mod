@@ -9,6 +9,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/pkg/errors v0.9.1
+	github.com/pressly/goose v2.7.0+incompatible
 	github.com/streadway/amqp v1.1.0
 	github.com/stretchr/testify v1.8.1
 	go.uber.org/zap v1.27.0
