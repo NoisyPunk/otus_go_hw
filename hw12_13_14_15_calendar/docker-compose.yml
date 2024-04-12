@@ -26,8 +26,17 @@ services:
   calendar:
     image: calendar:latest
     container_name: calendar-app
+    restart: always
     ports:
       - "8182:8182"
       - "8185:8185"
     depends_on:
       - db-calendar
+
+  scheduler:
+    image: scheduler:latest
+    container_name: scheduler-app
+    restart: always
+    depends_on:
+      - db-calendar
+      - rabbitmq
