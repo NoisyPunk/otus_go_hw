@@ -11,6 +11,10 @@ services:
       POSTGRES_DB: calendar
     ports:
       - "5432:5432"
+    networks:
+      some_network:
+        aliases:
+          - testdb.local
 
   rabbitmq:
     image: rabbitmq:3.10.7-management
@@ -22,16 +26,23 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    networks:
+      some_network:
 
   calendar:
     image: calendar:latest
     container_name: calendar-app
     restart: always
     ports:
-      - "8182:8182"
+      - "127.0.0.1:8182:8182"
       - "8185:8185"
     depends_on:
       - db-calendar
+    hostname: calendar-app
+    networks:
+      some_network:
+        aliases:
+          - calendar.service
 
   scheduler:
     image: scheduler:latest
@@ -40,6 +51,8 @@ services:
     depends_on:
       - db-calendar
       - rabbitmq
+    networks:
+      some_network:
 
   sender:
     image: sender:latest
@@ -48,3 +61,9 @@ services:
     depends_on:
       - rabbitmq
       - scheduler
+    networks:
+      some_network:
+
+networks:
+  some_network:
+    name: 'our_network'

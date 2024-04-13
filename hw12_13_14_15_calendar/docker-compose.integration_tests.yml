@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  tests:
+    image: tests:latest
+    container_name: tests
+    networks:
+      some_network:
+
+networks:
+  some_network:
+    name: 'our_network'
