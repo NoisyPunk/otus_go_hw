@@ -36,6 +36,11 @@ generate:
 test:
 	go test -race ./internal/...
 
+integration-tests:
+	docker-compose up -d --force-recreate && \
+	docker-compose -f docker-compose.integration_tests.yml up --force-recreate && \
+	docker-compose down
+
 install-lint-deps:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	calendarconfig "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs/calendar_config"
+	// need for work with migrations.
 	_ "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/migrations"
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose"

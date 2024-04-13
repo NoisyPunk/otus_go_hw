@@ -3,15 +3,16 @@ package internalhttp
 import (
 	"bytes"
 	"context"
+	"io"
+	"net/http"
+	"testing"
+	"time"
+
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage"
 	sqlstorage "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-	"io"
-	"net/http"
-	"testing"
-	"time"
 )
 
 func TestCreateEventHandler(t *testing.T) {
@@ -49,8 +50,9 @@ func TestCreateEventHandler(t *testing.T) {
 
 	for _, c := range testCases {
 		t.Run(c.name, func(t *testing.T) {
-			r, err := http.Post(c.target, "application/json", c.body)
+			r, err := http.Post(c.target, "application/json", c.body) //nolint:noctx
 			require.NoError(t, err)
+			defer r.Body.Close()
 			require.Equal(t, c.responseCode, r.StatusCode)
 		})
 	}
@@ -91,8 +93,9 @@ func TestCreateUpdateHandler(t *testing.T) {
 
 	for _, c := range testCases {
 		t.Run(c.name, func(t *testing.T) {
-			r, err := http.Post(c.target, "application/json", c.body)
+			r, err := http.Post(c.target, "application/json", c.body) //nolint:noctx
 			require.NoError(t, err)
+			defer r.Body.Close()
 			require.Equal(t, c.responseCode, r.StatusCode)
 		})
 	}
@@ -104,7 +107,7 @@ func TestEvent(t *testing.T) {
 
 	DBstorage := sqlstorage.New()
 
-	dsn := "host=testdb.local port=5432 user=postgres password=postgres dbname=calendar sslmode=disable"
+	dsn := "host=testdb.local port=5433 user=postgres password=postgres dbname=calendar sslmode=disable"
 
 	err := DBstorage.Connect(ctx, dsn)
 	require.NoError(t, err)

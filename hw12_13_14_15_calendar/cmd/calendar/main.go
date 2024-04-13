@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"os"
 	"os/signal"
 	"sync"
@@ -16,6 +15,7 @@ import (
 	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/logger"
 	internalgrpc "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/grpc"
 	internalhttp "github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/server/http"
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"go.uber.org/zap"
 )
 
