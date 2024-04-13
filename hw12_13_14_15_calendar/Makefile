@@ -34,16 +34,18 @@ generate:
 	go generate ./...
 
 test:
-	docker-compose up -d \
-	&& go install 'github.com/pressly/goose/cmd/goose@latest' \
-	&& goose -dir migrations postgres "host=127.0.0.1 port=5436 user=postgres password=postgres dbname=calendar sslmode=disable" up \
-	&& go test -race ./internal/... \
-	&& docker-compose down -v
+	go test -race ./internal/...
 
 install-lint-deps:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 lint: install-lint-deps
 	golangci-lint run ./...
+
+up:
+	docker-compose up -d
+
+down:
+	docker-compose down
 
 .PHONY: build-calendar build-scheduler build-sender run-calendar run-scheduler run-sender build-img run-img version test lint generate

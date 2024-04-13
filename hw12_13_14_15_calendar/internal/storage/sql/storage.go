@@ -20,7 +20,7 @@ var (
 )
 
 type Storage struct {
-	db *sqlx.DB
+	DB *sqlx.DB
 }
 
 func New() *Storage {
@@ -28,15 +28,15 @@ func New() *Storage {
 }
 
 func (s *Storage) Connect(ctx context.Context, dsn string) (err error) {
-	s.db, err = sqlx.Open("postgres", dsn)
+	s.DB, err = sqlx.Open("postgres", dsn)
 	if err != nil {
 		return errors.Wrap(err, ErrDBConnection.Error())
 	}
-	return s.db.PingContext(ctx)
+	return s.DB.PingContext(ctx)
 }
 
 func (s *Storage) Close() error {
-	return s.db.Close()
+	return s.DB.Close()
 }
 
 func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UUID) (storage.Event, error) {
@@ -56,7 +56,7 @@ func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UU
 		TimeToNotify: data.TimeToNotify,
 	}
 
-	_, err := s.db.NamedQuery(query, event)
+	_, err := s.DB.NamedQuery(query, event)
 	if err != nil {
 		l.Error(err.Error(), zap.String("event_id:", eventID.String()))
 		return storage.Event{}, errors.Wrap(err, ErrCreateEvent.Error())
@@ -71,7 +71,7 @@ func (s *Storage) Update(ctx context.Context, eventID uuid.UUID, event storage.E
 	query := `UPDATE events SET (user_id, title, date_and_time, duration, description, time_to_notify) =
 				(:user_id, :title, :date_and_time, :duration, :description, :time_to_notify) WHERE id=:id`
 
-	_, err := s.db.NamedQuery(query, &event)
+	_, err := s.DB.NamedQuery(query, &event)
 	if err != nil {
 		l.Error(err.Error(), zap.String("event_id:", eventID.String()))
 		return err
@@ -85,7 +85,7 @@ func (s *Storage) Delete(ctx context.Context, eventID uuid.UUID) error {
 
 	query := `DELETE FROM events WHERE id=$1`
 
-	_, err := s.db.Exec(query, eventID)
+	_, err := s.DB.Exec(query, eventID)
 	if err != nil {
 		l.Error(err.Error(), zap.String("event_id:", eventID.String()))
 		return err
@@ -100,7 +100,7 @@ func (s *Storage) DailyList(ctx context.Context, date time.Time, userID uuid.UUI
 	var events []storage.Event
 	query := `SELECT * FROM events where user_id = $1 and date_and_time between $2 and $2 + INTERVAL '1 day'`
 
-	err := s.db.Select(&events, query, userID, date)
+	err := s.DB.Select(&events, query, userID, date)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (s *Storage) WeeklyList(ctx context.Context, startWeekDate time.Time, userI
 	var events []storage.Event
 	query := `SELECT * FROM events where user_id = $1 and date_and_time between $2 and $2 + INTERVAL '1 week'`
 
-	err := s.db.Select(&events, query, userID, startWeekDate)
+	err := s.DB.Select(&events, query, userID, startWeekDate)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	var events []storage.Event
 	query := `SELECT * FROM events where user_id = $1 and date_and_time between $2 and $2 + INTERVAL '1 month'`
 
-	err := s.db.Select(&events, query, userID, startMonthDate)
+	err := s.DB.Select(&events, query, userID, startMonthDate)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func (s *Storage) DeleteOldEvents(ctx context.Context, storagePeriod int) error 
 
 	query := `SELECT id FROM events where date_and_time < $1`
 
-	err := s.db.Select(&events, query, period)
+	err := s.DB.Select(&events, query, period)
 	if err != nil {
 		return err
 	}
@@ -166,7 +166,7 @@ func (s *Storage) NotifyList(ctx context.Context) ([]storage.Event, error) {
 			FROM events where  date_and_time > now() + make_interval(hours := 3) 
               and now() + make_interval(hours := 3) + make_interval(mins := time_to_notify) > date_and_time`
 
-	err := s.db.Select(&events, query)
+	err := s.DB.Select(&events, query)
 	if err != nil {
 		return nil, err
 	}
