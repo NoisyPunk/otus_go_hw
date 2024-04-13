@@ -107,7 +107,7 @@ func TestEvent(t *testing.T) {
 
 	DBstorage := sqlstorage.New()
 
-	dsn := "host=testdb.local port=5433 user=postgres password=postgres dbname=calendar sslmode=disable"
+	dsn := "host=testdb.local port=5432 user=postgres password=postgres dbname=calendar sslmode=disable"
 
 	err := DBstorage.Connect(ctx, dsn)
 	require.NoError(t, err)
