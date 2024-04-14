@@ -15,7 +15,8 @@ type Consumer struct {
 }
 
 func NewConsumer(log *zap.Logger, config *senderconfig.Config) (*Consumer, error) {
-	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
+	url := "amqp://" + config.RmqCreds.User + ":" + config.RmqCreds.Password + "@" + net.JoinHostPort(
+		config.RmqCreds.Host, config.RmqCreds.Port)
 	connect, err := amqp.Dial(url)
 	if err != nil {
 		log.Error("consumer connection to rmq failed")

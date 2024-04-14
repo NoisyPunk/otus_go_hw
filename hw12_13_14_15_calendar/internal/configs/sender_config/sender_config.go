@@ -1,21 +1,15 @@
 package senderconfig
 
 import (
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"os"
 
 	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	Host     string `yaml:"host"`
-	Port     string `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	LogLevel string `yaml:"logLevel"`
-}
-
-func newConfig() *Config {
-	return &Config{}
+	RmqCreds configs.RmqCreds `yaml:"rmq"`
+	LogLevel string           `yaml:"logLevel"`
 }
 
 func GetConfig(path string) (*Config, error) {
@@ -23,7 +17,7 @@ func GetConfig(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	config := newConfig()
+	config := &Config{}
 	err = yaml.Unmarshal(configYaml, config)
 	if err != nil {
 		return nil, err

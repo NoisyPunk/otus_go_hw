@@ -16,7 +16,8 @@ type Producer struct {
 }
 
 func NewProducer(log *zap.Logger, config *schedulerConfig.Config) (*Producer, error) {
-	url := "amqp://" + config.User + ":" + config.Password + "@" + net.JoinHostPort(config.Host, config.Port)
+	url := "amqp://" + config.RmqCreds.User + ":" + config.RmqCreds.Password + "@" + net.JoinHostPort(
+		config.RmqCreds.Host, config.RmqCreds.Port)
 	connect, err := amqp.Dial(url)
 	if err != nil {
 		log.Error("producer connection to rmq failed")
