@@ -39,6 +39,7 @@ test:
 integration-tests:
 	docker-compose up -d --force-recreate && \
 	docker-compose -f docker-compose.integration_tests.yml up --force-recreate && \
+	docker-compose -f docker-compose.integration_tests.yml down && \
 	docker-compose down
 
 install-lint-deps:

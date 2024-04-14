@@ -30,6 +30,8 @@ services:
       some_network:
 
   calendar:
+    build:
+      dockerfile: ./build/calendar/Dockerfile
     image: calendar:latest
     container_name: calendar-app
     restart: always
@@ -45,6 +47,8 @@ services:
           - calendar.service
 
   scheduler:
+    build:
+      dockerfile: ./build/scheduler/Dockerfile
     image: scheduler:latest
     container_name: scheduler-app
     restart: always
@@ -55,6 +59,8 @@ services:
       some_network:
 
   sender:
+    build:
+      dockerfile: ./build/sender/Dockerfile
     image: sender:latest
     container_name: sender-app
     restart: always
