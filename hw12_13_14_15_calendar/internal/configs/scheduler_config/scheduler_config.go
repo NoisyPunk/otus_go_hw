@@ -1,9 +1,9 @@
 package schedulerconfig
 
 import (
-	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"os"
 
+	"github.com/NoisyPunk/otus_go_hw/hw12_13_14_15_calendar/internal/configs"
 	"gopkg.in/yaml.v3"
 )
 
