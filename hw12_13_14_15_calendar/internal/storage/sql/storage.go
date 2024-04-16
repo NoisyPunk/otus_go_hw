@@ -137,23 +137,14 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	return events, nil
 }
 
-func (s *Storage) DeleteOldEvents(ctx context.Context, storagePeriod int) error {
-	l := logger.FromContext(ctx)
-	var events []storage.Event
-
+func (s *Storage) DeleteOldEvents(storagePeriod int) error {
 	period := time.Now().Add(time.Duration(-storagePeriod) * (24 * time.Hour))
 
-	query := `SELECT id FROM events where date_and_time < $1`
+	query := `DELETE FROM events where date_and_time < $1`
 
-	err := s.DB.Select(&events, query, period)
+	_, err := s.DB.Exec(query, period)
 	if err != nil {
 		return err
-	}
-	for _, event := range events {
-		err = s.Delete(ctx, event.ID)
-		if err != nil {
-			l.Error("can't delete old event", zap.String("error_message", err.Error()))
-		}
 	}
 	return nil
 }

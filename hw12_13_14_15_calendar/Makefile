@@ -49,7 +49,7 @@ lint: install-lint-deps
 	golangci-lint run ./...
 
 up:
-	docker-compose up -d
+	docker-compose up --force-recreate
 
 down:
 	docker-compose down

@@ -52,7 +52,7 @@ func (a *App) OldEventRemover(ctx context.Context) {
 	for {
 		select {
 		case <-ticker.C:
-			err := a.storage.DeleteOldEvents(ctx, a.storePeriod)
+			err := a.storage.DeleteOldEvents(a.storePeriod)
 			if err != nil {
 				l.Error("can't delete old events", zap.String("error_message", err.Error()))
 				continue
