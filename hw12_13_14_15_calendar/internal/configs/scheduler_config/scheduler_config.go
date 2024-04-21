@@ -26,5 +26,11 @@ func GetConfig(path string) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+	k8s := os.Getenv("k8s")
+	if k8s != "" {
+		config.Dsn = "host=calendar-statefulset-0.calendar-service.default.svc.cluster.local port=5432 " +
+			"user=postgres password=postgres dbname=calendar sslmode=disable"
+		config.RmqCreds.Host = "calendar-statefulset-0.calendar-service.default.svc.cluster.local"
+	}
 	return config, nil
 }

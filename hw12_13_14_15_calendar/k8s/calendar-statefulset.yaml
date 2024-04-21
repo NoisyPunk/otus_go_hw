@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: calendar-statefulset
+spec:
+  serviceName: calendar-service
+  replicas: 1  # сколько подов требуется в стейтфулсете
+  template:
+    metadata:
+      labels:
+        # label нужен из тех же соображений, что и в деплойменте.
+        app: calendar-app
+    spec:
+      containers:
+        - name: postgres-container
+          image: postgres:14.1-alpine
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: calendar
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: calendar-pvc
+          # Выставляем наружу дефолтный порт монги.
+          ports:
+            - containerPort: 5432
+              name: postgres-cli
+
+        - name: rmq
+          image: rabbitmq:3.10.7-management
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 15672
+            - containerPort: 5672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: user
+            - name: RABBITMQ_DEFAULT_PASS
+              value: pass
+          volumeMounts:
+            - mountPath: "/data/rmq"
+              name: calendar-pvc
+
+
+  # selector нужен из тех же соображений, что и в деплойменте.
+  selector:
+    matchLabels:
+      app: calendar-app
+  volumeClaimTemplates:
+    - metadata:
+        name: calendar-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Mi

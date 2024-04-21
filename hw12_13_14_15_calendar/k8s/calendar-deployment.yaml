@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: calendar-app
+    spec:
+      containers:
+        - name: calendar-container
+          image: calendar:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8182
+            - containerPort: 8185
+          env:
+            - name: k8s
+              value: calendar-statefulset-0
+        - name: scheduler-container
+          image: scheduler:latest
+          imagePullPolicy: Never
+          env:
+            - name: k8s
+              value: calendar-statefulset-0
+        - name: sender-container
+          image: sender:latest
+          imagePullPolicy: Never
+          env:
+            - name: k8s
+              value: calendar-statefulset-0
+  selector:
+    matchLabels:
+      app: calendar-app
