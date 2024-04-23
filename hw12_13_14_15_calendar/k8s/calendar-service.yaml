@@ -3,9 +3,6 @@ kind: Service
 metadata:
   name: calendar-service
 spec:
-  # ClusterIP — самый простой тип сервиса, который
-  # позволяет подам связываться друг с другом в рамках
-  # кластера, но абсолютно никак не виден снаружи:
   type: ClusterIP
   clusterIP: None
   selector:

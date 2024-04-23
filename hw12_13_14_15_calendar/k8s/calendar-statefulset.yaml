@@ -4,11 +4,10 @@ metadata:
   name: calendar-statefulset
 spec:
   serviceName: calendar-service
-  replicas: 1  # сколько подов требуется в стейтфулсете
+  replicas: 1
   template:
     metadata:
       labels:
-        # label нужен из тех же соображений, что и в деплойменте.
         app: calendar-app
     spec:
       containers:
@@ -24,7 +23,6 @@ spec:
           volumeMounts:
             - mountPath: "/data/db"
               name: calendar-pvc
-          # Выставляем наружу дефолтный порт монги.
           ports:
             - containerPort: 5432
               name: postgres-cli
@@ -45,7 +43,6 @@ spec:
               name: calendar-pvc
 
 
-  # selector нужен из тех же соображений, что и в деплойменте.
   selector:
     matchLabels:
       app: calendar-app
