@@ -1,0 +1,12 @@
+app:
+  name: calendar-app
+deployenvs:
+  k8s: calendar-statefulset-0
+pg:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: calendar
+rmq:
+  RABBITMQ_DEFAULT_USER: user
+  RABBITMQ_DEFAULT_PASS: pass
+replicas: 1

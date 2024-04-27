@@ -6,4 +6,4 @@ spec:
   type: ClusterIP
   clusterIP: None
   selector:
-    app: calendar-app
+    app: {{ .Values.app.name }}

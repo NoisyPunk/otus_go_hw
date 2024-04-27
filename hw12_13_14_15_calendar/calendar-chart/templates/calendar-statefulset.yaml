@@ -8,18 +8,16 @@ spec:
   template:
     metadata:
       labels:
-        app: calendar-app
+        app: {{ .Values.app.name }}
     spec:
       containers:
         - name: postgres-container
           image: postgres:14.1-alpine
           env:
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: postgres
-            - name: POSTGRES_DB
-              value: calendar
+          {{- range $key,$val:=.Values.pg}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
           volumeMounts:
             - mountPath: "/data/db"
               name: calendar-pvc
@@ -34,10 +32,10 @@ spec:
             - containerPort: 15672
             - containerPort: 5672
           env:
-            - name: RABBITMQ_DEFAULT_USER
-              value: user
-            - name: RABBITMQ_DEFAULT_PASS
-              value: pass
+          {{- range $key,$val:=.Values.rmq}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
           volumeMounts:
             - mountPath: "/data/rmq"
               name: calendar-pvc
@@ -45,7 +43,7 @@ spec:
 
   selector:
     matchLabels:
-      app: calendar-app
+      app: {{ .Values.app.name }}
   volumeClaimTemplates:
     - metadata:
         name: calendar-pvc
