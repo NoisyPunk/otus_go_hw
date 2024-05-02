@@ -1,13 +1,20 @@
 package hw10programoptimization
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
 	"io"
-	"regexp"
 	"strings"
+
+	"github.com/mailru/easyjson"
 )
 
+var (
+	ErrEmptyDomain = fmt.Errorf("empty domain")
+	ErrEmptyData   = fmt.Errorf("empty data")
+)
+
+//easyjson:json
 type User struct {
 	ID       int
 	Name     string
@@ -21,45 +28,44 @@ type User struct {
 type DomainStat map[string]int
 
 func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
-	u, err := getUsers(r)
+	u, err := getEmails(r)
 	if err != nil {
 		return nil, fmt.Errorf("get users error: %w", err)
 	}
 	return countDomains(u, domain)
 }
 
-type users [100_000]User
+type emails []string
 
-func getUsers(r io.Reader) (result users, err error) {
-	content, err := io.ReadAll(r)
-	if err != nil {
-		return
+func getEmails(r io.Reader) (result emails, err error) {
+	if r == nil {
+		return nil, ErrEmptyData
 	}
+	s := bufio.NewScanner(r)
+	user := User{}
 
-	lines := strings.Split(string(content), "\n")
-	for i, line := range lines {
-		var user User
-		if err = json.Unmarshal([]byte(line), &user); err != nil {
+	for s.Scan() {
+		if err = easyjson.Unmarshal(s.Bytes(), &user); err != nil {
 			return
 		}
-		result[i] = user
+		result = append(result, user.Email)
 	}
 	return
 }
 
-func countDomains(u users, domain string) (DomainStat, error) {
+func countDomains(u emails, domain string) (DomainStat, error) {
 	result := make(DomainStat)
+	if domain == "" {
+		return nil, ErrEmptyDomain
+	}
 
-	for _, user := range u {
-		matched, err := regexp.Match("\\."+domain, []byte(user.Email))
-		if err != nil {
-			return nil, err
+	for _, email := range u {
+		if email == "" {
+			continue
 		}
-
-		if matched {
-			num := result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])]
-			num++
-			result[strings.ToLower(strings.SplitN(user.Email, "@", 2)[1])] = num
+		mailDomain := strings.SplitAfter(email, "@")
+		if strings.HasSuffix(mailDomain[1], domain) {
+			result[strings.ToLower(mailDomain[1])]++
 		}
 	}
 	return result, nil
