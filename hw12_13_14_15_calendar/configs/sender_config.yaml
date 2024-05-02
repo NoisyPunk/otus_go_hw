@@ -1,0 +1,8 @@
+rmq:
+  user: user
+  password: pass
+  host: "rabbitmq"
+  port: "5672"
+
+# logger
+logLevel: "debug"

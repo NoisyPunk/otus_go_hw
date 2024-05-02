@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: calendar-statefulset
+spec:
+  serviceName: calendar-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: postgres-container
+          image: postgres:14.1-alpine
+          env:
+          {{- range $key,$val:=.Values.pg}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: calendar-pvc
+          ports:
+            - containerPort: 5432
+              name: postgres-cli
+
+        - name: rmq
+          image: rabbitmq:3.10.7-management
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 15672
+            - containerPort: 5672
+          env:
+          {{- range $key,$val:=.Values.rmq}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
+          volumeMounts:
+            - mountPath: "/data/rmq"
+              name: calendar-pvc
+
+
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name }}
+  volumeClaimTemplates:
+    - metadata:
+        name: calendar-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 200Mi

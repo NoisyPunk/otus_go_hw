@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-deployment
+spec:
+  replicas: {{.Values.replicas | quote}}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name }}
+    spec:
+      containers:
+        - name: calendar-container
+          image: calendar:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8182
+            - containerPort: 8185
+          env:
+          {{- range $key,$val:=.Values.deployenvs}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
+        - name: scheduler-container
+          image: scheduler:latest
+          imagePullPolicy: Never
+          env:
+          {{- range $key,$val:=.Values.deployenvs}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
+        - name: sender-container
+          image: sender:latest
+          imagePullPolicy: Never
+          env:
+          {{- range $key,$val:=.Values.deployenvs}}
+            - name: {{$key}}
+              value: {{$val -}}
+          {{end}}
+  selector:
+    matchLabels:
+      app: calendar-app

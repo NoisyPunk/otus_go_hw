@@ -22,7 +22,15 @@ func New() *Storage {
 	}
 }
 
-func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UUID) (uuid.UUID, error) {
+func (s *Storage) Connect(_ context.Context, _ string) (err error) {
+	return nil
+}
+
+func (s *Storage) Close() error {
+	return nil
+}
+
+func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UUID) (storage.Event, error) {
 	l := logger.FromContext(ctx).With(zap.String("user_id", data.UserID.String()))
 
 	eventID := uuid.New()
@@ -39,7 +47,7 @@ func (s *Storage) Create(ctx context.Context, data storage.Event, userID uuid.UU
 	defer s.mu.Unlock()
 	s.storage[eventID] = event
 	l.Info("event created ", zap.String("event_id:", eventID.String()))
-	return eventID, nil
+	return event, nil
 }
 
 func (s *Storage) Update(ctx context.Context, eventID uuid.UUID, event storage.Event) error {
@@ -112,4 +120,12 @@ func (s *Storage) MonthlyList(ctx context.Context, startMonthDate time.Time,
 	}
 	l.Info("monthly list formed", zap.String("user_id:", userID.String()))
 	return events, nil
+}
+
+func (s *Storage) DeleteOldEvents(_ int) error {
+	return nil
+}
+
+func (s *Storage) NotifyList(_ context.Context) ([]storage.Event, error) {
+	return nil, nil
 }

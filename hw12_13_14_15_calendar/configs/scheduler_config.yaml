@@ -1,0 +1,17 @@
+rmq:
+  user: user
+  password: pass
+  host: "rabbitmq"
+  port: "5672"
+
+# logger
+logLevel: "debug"
+
+# storage
+postgresDsn: "host=db-calendar port=5432 user=postgres password=postgres dbname=calendar sslmode=disable"
+
+# years
+storagePeriod: 1
+# mins
+removeScannerFrequency: 60
+notifyScannerFrequency: 1

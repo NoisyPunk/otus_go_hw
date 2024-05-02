@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  tests:
+    build:
+      dockerfile: ./build/integration_tests/Dockerfile
+    image: tests:latest
+    container_name: tests
+    networks:
+      some_network:
+
+networks:
+  some_network:
+    name: 'our_network'
